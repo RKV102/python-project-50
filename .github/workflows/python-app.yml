@@ -14,7 +14,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
+        pip install flake8 pytest coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
@@ -24,4 +24,12 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        coverage run -m pytest
+    - uses: paambaati/codeclimate-action@v5.0.0
+      env:
+        CC_TEST_REPORTER_ID: 0eb853953b2570b648c355c9f745592160d2d85f270bdd519f511b32150b0728
+      with:
+        coverageCommand: coverage lcov
+        coverageLocations: |
+          ./coverage.lcov:lcov
+        verifyDownload: true
