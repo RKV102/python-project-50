@@ -2,27 +2,12 @@ import argparse
 from gendiff.parsers import json_parser
 
 
-def gendiff():
-    args = parse_arg()
-    first_file = get_item(args)
-    second_file = get_item(args)
+def gendiff(first_file, second_file):
     parsed_content = json_parser.parse(first_file, second_file)
     first_content = get_item(parsed_content)
     second_content = get_item(parsed_content)
     diff = diff_content(first_content, second_content)
     print(diff)
-
-
-def parse_arg():
-    parser = argparse.ArgumentParser(description='Compares two '
-                                     + 'configuration files and '
-                                     + 'shows a difference.')
-    parser.add_argument('first_file', type=str)
-    parser.add_argument('second_file', type=str)
-    parser.add_argument('-f', '--format', type=str,
-                        help='set format of output')
-    args = parser.parse_args()
-    return [args.first_file, args.second_file]
 
 
 def diff_content(f1_content, f2_content):
