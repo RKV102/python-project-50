@@ -1,4 +1,3 @@
-import argparse
 from gendiff.parsers import json_parser
 
 
