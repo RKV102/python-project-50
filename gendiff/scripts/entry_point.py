@@ -5,8 +5,8 @@ from gendiff.gendiff import gendiff
 
 def main():
     args = parse_arg()
-    file_path_1 = get_item(args)
-    file_path_2 = get_item(args)
+    file_path_1 = get_arg(args)
+    file_path_2 = get_arg(args)
     gendiff(file_path_1, file_path_2)
 
 
@@ -23,7 +23,7 @@ def parse_arg():
 
 
 def get_arg(args):
-    return iterable.pop(0)
+    return args.pop(0)
 
 
 if __name__ == '__main__':
