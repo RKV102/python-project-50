@@ -1,7 +1,7 @@
 import argparse
 
 
-def main():
+def gendiff():
     first_file, second_file = parse_arg()
     diff = generate_diff(first_file, second_file)
     print(diff)
