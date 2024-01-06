@@ -22,7 +22,7 @@ def parse_arg():
     return [args.first_file, args.second_file]
 
 
-def get_item(iterable):
+def get_arg(args):
     return iterable.pop(0)
 
 
