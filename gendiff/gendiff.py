@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import json
 
 
 def main():
@@ -19,41 +18,6 @@ def parse_arg():
                         help='set format of output')
     args = parser.parse_args()
     return args.first_file, args.second_file
-
-
-def read_content(first_file, second_file):
-    with open(first_file) as f1:
-        with open(second_file) as f2:
-            f1_content = json.load(f1)
-            f2_content = json.load(f2)
-    return f1_content, f2_content
-
-
-def generate_diff(first_file, second_file):
-    f1_content, f2_content = read_content(first_file, second_file)
-    diff = diff_content(f1_content, f2_content)
-    return diff
-
-
-def sort_keys(f_keys):
-    f_keys.sort()
-    return f_keys
-
-
-def get_keys(f_content):
-    return list(f_content.keys())
-
-
-def get_value(key, f_content):
-    return f_content[key]
-
-
-def unite_keys(f1_keys, f2_keys):
-    f1_set = set(f1_keys)
-    f2_set = set(f2_keys)
-    union_set = f1_set.union(f2_set)
-    united_keys = list(union_set)
-    return united_keys
 
 
 def diff_content(f1_content, f2_content):
@@ -81,5 +45,22 @@ def diff_content(f1_content, f2_content):
     return diff
 
 
-if __name__ == '__main__':
-    main()
+def unite_keys(f1_keys, f2_keys):
+    f1_set = set(f1_keys)
+    f2_set = set(f2_keys)
+    union_set = f1_set.union(f2_set)
+    united_keys = list(union_set)
+    return united_keys
+
+
+def sort_keys(f_keys):
+    f_keys.sort()
+    return f_keys
+
+
+def get_keys(f_content):
+    return list(f_content.keys())
+
+
+def get_value(key, f_content):
+    return f_content[key]
