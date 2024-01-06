@@ -4,9 +4,9 @@ from gendiff.gendiff import gendiff, get_item
 
 def main():
     args = parse_arg()
-    first_file = get_item(args)
-    second_file = get_item(args)
-    gendiff(first_file, second_file)
+    file_path_1 = get_item(args)
+    file_path_2 = get_item(args)
+    gendiff(file_path_1, file_path_2)
 
 
 def parse_arg():
