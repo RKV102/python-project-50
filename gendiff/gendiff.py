@@ -4,11 +4,11 @@ from gendiff.parsers import json_parser
 def gendiff(file_path_1, file_path_2):
     parsed_content_1 = json_parser.parse(file_path_1)
     parsed_content_2 = json_parser.parse(file_path_2)
-    diff = diff_content(parsed_content_1, parsed_content_2)
+    diff = diff_parsed(parsed_content_1, parsed_content_2)
     print(diff)
 
 
-def diff_content(parsed_content_1, parsed_content_2):
+def diff_parsed(parsed_content_1, parsed_content_2):
     first_keys = get_keys(parsed_content_1)
     second_keys = get_keys(parsed_content_2)
     united_keys = unite_keys(first_keys, second_keys)
