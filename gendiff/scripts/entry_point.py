@@ -22,5 +22,9 @@ def parse_arg():
     return [args.first_file, args.second_file]
 
 
+def get_item(iterable):
+    return iterable.pop(0)
+
+
 if __name__ == '__main__':
     main()

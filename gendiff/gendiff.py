@@ -52,7 +52,3 @@ def get_keys(parsed_content):
 
 def get_value(key, parsed_content):
     return parsed_content[key]
-
-
-def get_item(iterable):
-    return iterable.pop(0)
