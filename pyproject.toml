@@ -10,7 +10,7 @@ packages = [
 
 
 [tool.poetry.scripts]
-gendiff = "gendiff.scripts.gendiff:main"
+gendiff = "gendiff.scripts.entry_point:main"
 
 
 [tool.poetry.dependencies]
