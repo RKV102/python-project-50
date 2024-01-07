@@ -12,9 +12,9 @@ def diff_parsed(parsed_content_1, parsed_content_2):
     first_keys = get_keys(parsed_content_1)
     second_keys = get_keys(parsed_content_2)
     united_keys = unite_keys(first_keys, second_keys)
-    united_sorted_keys = sort_keys(united_keys)
+    united_keys.sort()
     diff = '{\n'
-    for key in united_sorted_keys:
+    for key in united_keys:
         if key in first_keys:
             first_value = get_value(key, parsed_content_1)
             if key in second_keys:
@@ -39,11 +39,6 @@ def unite_keys(first_keys, second_keys):
     union_set = first_set.union(second_set)
     united_keys = list(union_set)
     return united_keys
-
-
-def sort_keys(keys):
-    keys.sort()
-    return keys
 
 
 def get_keys(parsed_content):
