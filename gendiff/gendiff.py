@@ -15,20 +15,23 @@ def diff_parsed(parsed_content_1, parsed_content_2):
     united_keys.sort()
     diff = '{\n'
     for key in united_keys:
-        if key in first_keys:
-            first_value = get_value(key, parsed_content_1)
-            if key in second_keys:
+        match key in first_keys:
+            case True:
+                first_value = get_value(key, parsed_content_1)
+                match key in second_keys:
+                    case True:
+                        second_value = get_value(key, parsed_content_2)
+                        match first_value == second_value:
+                            case True:
+                                diff = f'{diff}    {key}: {first_value}\n'
+                            case _:
+                                diff = f'{diff}  - {key}: {first_value}\n'
+                                diff = f'{diff}  + {key}: {second_value}\n'
+                    case _:
+                        diff = f'{diff}  - {key}: {first_value}\n'
+            case _:
                 second_value = get_value(key, parsed_content_2)
-                if first_value == second_value:
-                    diff = f'{diff}    {key}: {first_value}\n'
-                else:
-                    diff = f'{diff}  - {key}: {first_value}\n'
-                    diff = f'{diff}  + {key}: {second_value}\n'
-            else:
-                diff = f'{diff}  - {key}: {first_value}\n'
-        else:
-            second_value = get_value(key, parsed_content_2)
-            diff = f'{diff}  + {key}: {second_value}\n'
+                diff = f'{diff}  + {key}: {second_value}\n'
     diff += '}'
     return diff
 
