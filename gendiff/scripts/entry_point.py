@@ -4,13 +4,6 @@ from gendiff.gendiff import gendiff
 
 
 def main():
-    args = parse_arg()
-    file_path_1 = get_arg(args)
-    file_path_2 = get_arg(args)
-    gendiff(file_path_1, file_path_2)
-
-
-def parse_arg():
     parser = argparse.ArgumentParser(description='Compares two '
                                      + 'configuration files and '
                                      + 'shows a difference.')
@@ -19,7 +12,9 @@ def parse_arg():
     parser.add_argument('-f', '--format', type=str,
                         help='set format of output')
     args = parser.parse_args()
-    return [args.first_file, args.second_file]
+    file_path_1 = args.first_file
+    file_path_2 = args.second_file
+    gendiff(file_path_1, file_path_2)
 
 
 def get_arg(args):
