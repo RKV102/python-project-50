@@ -17,9 +17,5 @@ def main():
     gendiff(file_path_1, file_path_2)
 
 
-def get_arg(args):
-    return args.pop(0)
-
-
 if __name__ == '__main__':
     main()
