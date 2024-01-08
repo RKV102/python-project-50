@@ -10,7 +10,8 @@ def main():
     parser.add_argument('first_file', type=str)
     parser.add_argument('second_file', type=str)
     parser.add_argument('-f', '--format', type=str, required=True,
-                        dest='format', help='set format of output')
+                        dest='format', help='set format of output. '
+                        + 'Possible options: json, yaml')
     args = parser.parse_args()
     file_path_1 = args.first_file
     file_path_2 = args.second_file
