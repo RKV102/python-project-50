@@ -1,9 +1,14 @@
 from gendiff import parsers
 
 
-def gendiff(file_path_1, file_path_2):
-    parsed_content_1 = parsers.json_parser.parse_json(file_path_1)
-    parsed_content_2 = parsers.json_parser.parse_json(file_path_2)
+def gendiff(file_path_1, file_path_2, format_):
+    match format_:
+        case 'json':
+            parsed_content_1 = parsers.json_parser.parse_json(file_path_1)
+            parsed_content_2 = parsers.json_parser.parse_json(file_path_2)
+        case 'yaml':
+            parsed_content_1 = parsers.json_parser.parse_yaml(file_path_1)
+            parsed_content_2 = parsers.json_parser.parse_yaml(file_path_2)
     diff = diff_parsed(parsed_content_1, parsed_content_2)
     print(diff)
 

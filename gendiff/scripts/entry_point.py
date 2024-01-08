@@ -15,7 +15,7 @@ def main():
     file_path_1 = args.first_file
     file_path_2 = args.second_file
     format_ = args.format
-    gendiff(file_path_1, file_path_2)
+    gendiff(file_path_1, file_path_2, format_)
 
 
 if __name__ == '__main__':
