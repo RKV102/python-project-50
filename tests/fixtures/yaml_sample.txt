@@ -1,0 +1,8 @@
+{
+  - age: 18
+  + age: 35
+  + birth: 11.11
+    city: Moscow
+  - name: Oleg
+  + name: Ivan
+}
