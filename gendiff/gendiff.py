@@ -1,15 +1,21 @@
 from gendiff import parsers
 
 
-def gendiff(file_path_1, file_path_2, format_):
-    match format_:
-        case 'json':
-            parsed_content_1 = parsers.json_parser.parse_json(file_path_1)
-            parsed_content_2 = parsers.json_parser.parse_json(file_path_2)
-        case 'yaml':
-            parsed_content_1 = parsers.yaml_parser.parse_yaml(file_path_1)
-            parsed_content_2 = parsers.yaml_parser.parse_yaml(file_path_2)
-    diff = diff_parsed(parsed_content_1, parsed_content_2)
+def gendiff(*file_paths):
+    parsed_content = []
+    for file_path in file_paths:
+        match file_path.endswith('json'):
+            case True:
+                parsed_content.append(parsers.json_parser.parse_json(file_path))
+            case _:
+                match file_path.endswith(('yml', 'yaml')):
+                    case True:
+                        parsed_content.append(parsers.yaml_parser.
+                                              parse_yaml(file_path))
+                    case _:
+                        print(f'Unsupported file type. See: "{file_path}"')
+                        return
+    diff = diff_parsed(*parsed_content)
     print(diff)
 
 
