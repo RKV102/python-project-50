@@ -16,6 +16,7 @@ def gendiff(*file_paths):
                         return
     diff = diff_parsed(*parsed_content)
     print(diff)
+    return diff
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
