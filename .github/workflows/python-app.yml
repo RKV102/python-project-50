@@ -15,7 +15,7 @@ jobs:
     - name: Installing dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install poetry pyyaml
+        pip install poetry
         make install
         make config
     - name: Linting by flake8
