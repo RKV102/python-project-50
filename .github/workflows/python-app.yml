@@ -17,7 +17,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry
         make install
-        make config
+        make configure
     - name: Linting by flake8
       run: make lint
     - name: Testing by pytest
@@ -27,7 +27,6 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
-        coverageCommand: make coverage
-        coverageLocations: |
-          ./coverage.lcov:lcov
+        coverageCommand: make cover
+        coverageLocations: ./coverage.lcov:lcov
         verifyDownload: true

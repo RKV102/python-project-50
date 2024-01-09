@@ -1,7 +1,7 @@
 install:
 	poetry install
 
-config:
+configure:
 	poetry config virtualenvs.in-project true
 
 lint:
@@ -10,5 +10,5 @@ lint:
 test:
 	poetry run coverage run -m pytest
 
-coverage:
+cover:
 	poetry run coverage lcov
