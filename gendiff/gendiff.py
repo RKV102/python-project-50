@@ -1,4 +1,6 @@
-from gendiff.parsers import json_parser, yaml_parser
+import json
+import yaml
+from gendiff import parser
 
 
 def gendiff(*file_paths):
@@ -6,11 +8,13 @@ def gendiff(*file_paths):
     for file_path in file_paths:
         match file_path.endswith('json'):
             case True:
-                parsed_content.append(json_parser.parse(file_path))
+                parsed_content.append(parser.parse(file_path, json))
             case _:
                 match file_path.endswith(('yml', 'yaml')):
                     case True:
-                        parsed_content.append(yaml_parser.parse(file_path))
+                        parsed_content.append(parser.parse(
+                            file_path, yaml, yaml.Loader
+                        ))
                     case _:
                         print(f'Unsupported file type. See: "{file_path}"')
                         return
