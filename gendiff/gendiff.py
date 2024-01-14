@@ -1,6 +1,6 @@
 import json
 import yaml
-from gendiff import parser
+from gendiff.parser_runner import run_parser
 
 
 def generate_diff(*file_paths):
@@ -8,11 +8,11 @@ def generate_diff(*file_paths):
     for file_path in file_paths:
         match file_path.endswith('json'):
             case True:
-                parsed_content.append(parser.parse(file_path, json))
+                parsed_content.append(run_parser(file_path, json))
             case _:
                 match file_path.endswith(('yml', 'yaml')):
                     case True:
-                        parsed_content.append(parser.parse(
+                        parsed_content.append(run_parser(
                             file_path, yaml, yaml.Loader
                         ))
                     case _:
