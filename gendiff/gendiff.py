@@ -24,9 +24,6 @@ def generate_diff(*file_paths):
 
 def diff_parsed(parsed_content_1, parsed_content_2):
 
-    def unite_keys(keys_1, keys_2):
-        return list(set(keys_1).union(set(keys_2)))
-
     def inner(key, parsed_content_1, parsed_content_2):
         value_1, value_2 = 'null', 'null'
         for num, parsed_content in enumerate((parsed_content_1,
@@ -48,7 +45,7 @@ def diff_parsed(parsed_content_1, parsed_content_2):
         return {key: diff_parsed(value_1, value_2)}
 
     keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
-    united_keys = unite_keys(keys_1, keys_2)
+    united_keys = list(set(keys_1).union(set(keys_2)))
     united_keys.sort()
     return list(map(lambda key: inner(key, parsed_content_1, parsed_content_2),
                     united_keys))
