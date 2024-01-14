@@ -19,7 +19,6 @@ def generate_diff(*file_paths):
                         print(f'Unsupported file type. See: "{file_path}"')
                         return
     diff = diff_parsed(*parsed_content)
-    print(diff)
     return diff
 
 
