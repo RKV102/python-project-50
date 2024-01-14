@@ -24,36 +24,29 @@ def gendiff(*file_paths):
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
-    keys_1 = parsed_content_1.keys()
-    keys_2 = parsed_content_2.keys()
+
+    def unite_keys(keys_1, keys_2):
+        return list(set(keys_1).union(set(keys_2)))
+
+    def inner(key, value_1, value_2, parsed_content_1, parsed_content_2):
+        if key in parsed_content_1:
+            value_1 = parsed_content_1[key]
+        if key in parsed_content_2:
+            value_2 = parsed_content_2[key]
+        if value_1 == 'null':
+            return {key: (value_2, '+')}
+        if value_2 == 'null':
+            return {key: (value_1, '-')}
+        if not isinstance(value_1, dict) or not isinstance(value_2, dict):
+            if value_1 == value_2:
+                return {key: (value_1, '=')}
+            return {key: (value_1, value_2, '±')}
+        return {key: diff_parsed(value_1, value_2)}
+
+    keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
     united_keys = unite_keys(keys_1, keys_2)
     united_keys.sort()
-    diff = '{\n'
-    for key in united_keys:
-        match key in keys_1:
-            case True:
-                value_1 = parsed_content_1[key]
-                match key in keys_2:
-                    case True:
-                        value_2 = parsed_content_2[key]
-                        match value_1 == value_2:
-                            case True:
-                                diff = f'{diff}    {key}: {value_1}\n'
-                            case _:
-                                diff = f'{diff}  - {key}: {value_1}\n'
-                                diff = f'{diff}  + {key}: {value_2}\n'
-                    case _:
-                        diff = f'{diff}  - {key}: {value_1}\n'
-            case _:
-                value_2 = parsed_content_2[key]
-                diff = f'{diff}  + {key}: {value_2}\n'
-    diff += '}'
-    return diff
-
-
-def unite_keys(keys_1, keys_2):
-    set_1 = set(keys_1)
-    set_2 = set(keys_2)
-    union_set = set_1.union(set_2)
-    united_keys = list(union_set)
-    return united_keys
+    value_1, value_2 = 'null', 'null'
+    return list(map(lambda key: inner(key, value_1, value_2,
+                                      parsed_content_1, parsed_content_2),
+                    united_keys))
