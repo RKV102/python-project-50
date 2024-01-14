@@ -1,3 +1,8 @@
-name: Oleg
-age: 18
-city: Moscow
+Roadside-Picnic:
+  authors:
+    first-author: Arkady Strugatsky
+    second-author: Boris Strugatsky
+    translator: Olena Bormashenko
+  language: English
+  publication-year: 2012
+  pages: 224

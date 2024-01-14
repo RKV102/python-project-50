@@ -1,4 +1,7 @@
-name: Ivan
-age: 35
-birth: 11.11
-city: Moscow
+The-Time-Wanderers:
+  language: Russian
+  origin:
+    country: USSR
+    city: Leningrad
+  publication-year: 1986
+  rating: 10
