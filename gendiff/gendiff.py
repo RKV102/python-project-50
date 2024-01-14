@@ -27,7 +27,8 @@ def diff_parsed(parsed_content_1, parsed_content_2):
     def unite_keys(keys_1, keys_2):
         return list(set(keys_1).union(set(keys_2)))
 
-    def inner(key, value_1, value_2, parsed_content_1, parsed_content_2):
+    def inner(key, parsed_content_1, parsed_content_2):
+        value_1, value_2 = 'null', 'null'
         if key in parsed_content_1:
             value_1 = parsed_content_1[key]
         if key in parsed_content_2:
@@ -45,7 +46,5 @@ def diff_parsed(parsed_content_1, parsed_content_2):
     keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
     united_keys = unite_keys(keys_1, keys_2)
     united_keys.sort()
-    value_1, value_2 = 'null', 'null'
-    return list(map(lambda key: inner(key, value_1, value_2,
-                                      parsed_content_1, parsed_content_2),
+    return list(map(lambda key: inner(key, parsed_content_1, parsed_content_2),
                     united_keys))
