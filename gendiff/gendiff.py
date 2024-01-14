@@ -3,7 +3,7 @@ import yaml
 from gendiff import parser
 
 
-def gendiff(*file_paths):
+def generate_diff(*file_paths):
     parsed_content = []
     for file_path in file_paths:
         match file_path.endswith('json'):
