@@ -23,8 +23,11 @@ def generate_diff(*file_paths):
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
-
-    def inner(key, parsed_content_1, parsed_content_2):
+    keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
+    united_keys = list(set(keys_1).union(set(keys_2)))
+    united_keys.sort()
+    diff = {}
+    for key in united_keys:
         value_1, value_2 = 'null', 'null'
         for num, parsed_content in enumerate((parsed_content_1,
                                               parsed_content_2), start=1):
@@ -36,16 +39,15 @@ def diff_parsed(parsed_content_1, parsed_content_2):
         for num, value in enumerate((value_1, value_2), start=1):
             if value == 'null':
                 if num == 1:
-                    return {key: (value_2, '+')}
-                return {key: (value_1, '-')}
-        if value_1 == value_2:
-            return {key: (value_1, '=')}
-        if not isinstance(value_1, dict) or not isinstance(value_2, dict):
-            return {key: (value_1, value_2, '±')}
-        return {key: diff_parsed(value_1, value_2)}
-
-    keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
-    united_keys = list(set(keys_1).union(set(keys_2)))
-    united_keys.sort()
-    return list(map(lambda key: inner(key, parsed_content_1, parsed_content_2),
-                    united_keys))
+                    diff[key] = (value_2, '+')
+                else:
+                    diff[key] = (value_1, '-')
+                break
+        else:
+            if value_1 == value_2:
+                diff[key] = (value_1, '=')
+            elif not isinstance(value_1, dict) or not isinstance(value_2, dict):
+                diff[key] = (value_1, value_2, '±')
+            else:
+                diff[key] = diff_parsed(value_1, value_2)
+    return diff
