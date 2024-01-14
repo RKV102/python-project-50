@@ -29,17 +29,21 @@ def diff_parsed(parsed_content_1, parsed_content_2):
 
     def inner(key, parsed_content_1, parsed_content_2):
         value_1, value_2 = 'null', 'null'
-        if key in parsed_content_1:
-            value_1 = parsed_content_1[key]
-        if key in parsed_content_2:
-            value_2 = parsed_content_2[key]
-        if value_1 == 'null':
-            return {key: (value_2, '+')}
-        if value_2 == 'null':
-            return {key: (value_1, '-')}
+        for num, parsed_content in enumerate((parsed_content_1,
+                                              parsed_content_2), start=1):
+            if key in parsed_content:
+                if num == 1:
+                    value_1 = parsed_content[key]
+                else:
+                    value_2 = parsed_content[key]
+        for num, value in enumerate((value_1, value_2), start=1):
+            if value == 'null':
+                if num == 1:
+                    return {key: (value_2, '+')}
+                return {key: (value_1, '-')}
+        if value_1 == value_2:
+            return {key: (value_1, '=')}
         if not isinstance(value_1, dict) or not isinstance(value_2, dict):
-            if value_1 == value_2:
-                return {key: (value_1, '=')}
             return {key: (value_1, value_2, '±')}
         return {key: diff_parsed(value_1, value_2)}
 
