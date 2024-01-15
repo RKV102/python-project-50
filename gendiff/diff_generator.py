@@ -24,31 +24,23 @@ def generate_diff(*file_paths):
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
-    keys_1, keys_2 = parsed_content_1.keys(), parsed_content_2.keys()
-    united_keys = list(set(keys_1).union(set(keys_2)))
+    keys_1, keys_2 = set(parsed_content_1.keys()), set(parsed_content_2.keys())
+    removed_keys = keys_1.difference(keys_2)
+    added_keys = keys_2.difference(keys_1)
+    united_keys = list(keys_1.union(keys_2))
     united_keys.sort()
     diff = {}
     for key in united_keys:
-        value_1, value_2 = 'null', 'null'
-        for num, parsed_content in enumerate((parsed_content_1,
-                                              parsed_content_2), start=1):
-            if key in parsed_content:
-                if num == 1:
-                    value_1 = parsed_content[key]
-                else:
-                    value_2 = parsed_content[key]
-        for num, value in enumerate((value_1, value_2), start=1):
-            if value == 'null':
-                if num == 1:
-                    diff[key] = (value_2, '+')
-                else:
-                    diff[key] = (value_1, '-')
-                break
+        if key in removed_keys:
+            diff[key] = (parsed_content_1[key], '-')
+        elif key in added_keys:
+            diff[key] = (parsed_content_2[key], '+')
+        elif parsed_content_1[key] == parsed_content_2[key]:
+            diff[key] = (parsed_content_1[key], '=')
+        elif not isinstance(parsed_content_1[key], dict) or\
+                not isinstance(parsed_content_2[key], dict):
+            diff[key] = (parsed_content_1[key], parsed_content_2[key], '+-')
         else:
-            if value_1 == value_2:
-                diff[key] = (value_1, '=')
-            elif not isinstance(value_1, dict) or not isinstance(value_2, dict):
-                diff[key] = (value_1, value_2, '+-')
-            else:
-                diff[key] = diff_parsed(value_1, value_2)
+            diff[key] = diff_parsed(parsed_content_1[key],
+                                    parsed_content_2[key])
     return diff
