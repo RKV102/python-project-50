@@ -6,18 +6,13 @@ from gendiff.parsers_runner import run_parser
 def generate_diff(*file_paths):
     parsed_content = []
     for file_path in file_paths:
-        match file_path.endswith('json'):
-            case True:
-                parsed_content.append(run_parser(file_path, json))
-            case _:
-                match file_path.endswith(('yml', 'yaml')):
-                    case True:
-                        parsed_content.append(run_parser(
-                            file_path, yaml, yaml.Loader
-                        ))
-                    case _:
-                        print(f'Unsupported file type. See: "{file_path}"')
-                        return
+        if file_path.endswith('json'):
+            parsed_content.append(run_parser(file_path, json))
+        elif file_path.endswith(('yml', 'yaml')):
+            parsed_content.append(run_parser(file_path, yaml, yaml.Loader))
+        else:
+            print(f'Unsupported file type. See: "{file_path}"')
+            return
     diff = diff_parsed(*parsed_content)
     print(diff)
     return diff
