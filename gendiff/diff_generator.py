@@ -1,6 +1,6 @@
 import json
 import yaml
-from gendiff.parser_runner import run_parser
+from gendiff.parsers_runner import run_parser
 
 
 def generate_diff(*file_paths):
