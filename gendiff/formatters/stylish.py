@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 INDENT_LEN = 4
 INDENT_SYMBOL = ' '
 
@@ -12,15 +15,18 @@ def format(diff):
             value = key_and_value[1]
             if isinstance(value, tuple):
                 action = value[-1]
-                if action == '=':
-                    formatted_diff += f'{indent}{key}: {transform(value[0])}\n'
-                else:
-                    for i in range(len(action)):
-                        diff_start = f'{indent[:-2]}{action[-i-1]} {key}: '
-                        formatted_diff += f'{diff_start}' + '{\n'\
-                            + inner(value[i], level + 1) + indent + '}\n'\
-                            if isinstance(value[i], dict)\
-                            else f'{diff_start}{transform(value[i])}\n'
+                formatted_diff += f'{indent}{key}: {transform(value[0])}\n'\
+                    if action == '='\
+                    else reduce(lambda x, y: x + y,
+                                map(lambda i: f'{indent[:-2]}'
+                                    + f'{action[-i-1]} {key}: '
+                                    + '{\n' + inner(value[i], level + 1)
+                                    + indent + '}\n'
+                                    if isinstance(value[i], dict)
+                                    else f'{indent[:-2]}'
+                                    + f'{action[-i-1]} {key}: '
+                                    + f'{transform(value[i])}\n',
+                                    range(len(action))))
             elif isinstance(value, dict):
                 formatted_diff += f'{indent}{key}:' + ' {\n'\
                     + inner(value, level + 1) + indent + '}\n'
