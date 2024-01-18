@@ -1,19 +1,24 @@
 {
-  - Roadside-Picnic: {
+    Roadside-Picnic: {
         authors: {
-            first-author: Arkady Strugatsky
+          - first-author: {
+                name: Arkady
+                surname: Strugatsky
+            }
+          + first-author: Arkady Strugatsky
             second-author: Boris Strugatsky
             translator: Olena Bormashenko
         }
         language: English
-        publication-year: 2012
         pages: 224
+        publication-year: 2012
     }
-  + The-Time-Wanderers: {
+    The-Time-Wanderers: {
         language: Russian
         origin: {
+          - city: Leningrad
+          + city: St. Petersburg
             country: USSR
-            city: Leningrad
         }
         publication-year: 1986
         rating: 10

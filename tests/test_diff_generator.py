@@ -1,23 +1,16 @@
-from gendiff.diff_generator import generate_diff
+from gendiff.diff_generator import diff_parsed
+from tests.fixtures.first_parsed_json import parsed as json_1
+from tests.fixtures.second_parsed_json import parsed as json_2
+from tests.fixtures.first_parsed_yaml import parsed as yaml_1
+from tests.fixtures.second_parsed_yaml import parsed as yaml_2
+from tests.fixtures.json_diff import diff as json_diff
+from tests.fixtures.yaml_diff import diff as yaml_diff
 
 
-def test_generate_diff():
+def test_diff_parsed():
 
     # JSON-тестирование
-    file_path_1 = './tests/fixtures/first_file.json'
-    file_path_2 = './tests/fixtures/second_file.json'
-    file_path_3 = './tests/fixtures/json_stylish_sample.txt'
-    with open(file_path_3) as sample:
-        sample_content = sample.read()
-    assert str(generate_diff('_', file_path_1, file_path_2)) == sample_content
+    assert diff_parsed(json_1, json_2) == json_diff
 
-    # YML/YAML-тестирование
-    file_path_1 = './tests/fixtures/first_file.yaml'
-    file_path_2 = './tests/fixtures/second_file.yaml'
-    file_path_3 = './tests/fixtures/yaml_stylish_sample.txt'
-    with open(file_path_3) as sample:
-        sample_content = sample.read()
-    assert str(generate_diff('_', file_path_1, file_path_2)) == sample_content
-
-    # YAML- и TXT-тестирование
-    assert generate_diff('_', file_path_1, file_path_3) is None
+    # YAML-тестирование
+    assert diff_parsed(yaml_1, yaml_2) == yaml_diff

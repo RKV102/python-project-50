@@ -18,7 +18,6 @@ def generate_diff(format, *file_paths):
     diff = diff_parsed(*parsed_content)
     formatted_diff = formatters.stylish.format(diff)
     print(formatted_diff)
-    return formatted_diff
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
