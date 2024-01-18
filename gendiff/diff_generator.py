@@ -1,9 +1,10 @@
 import json
 import yaml
 from gendiff.parsers_runner import run_parser
+import gendiff.formatters as formatters
 
 
-def generate_diff(*file_paths):
+def generate_diff(format, *file_paths):
     parsed_content = []
     for file_path in file_paths:
         if file_path.endswith('json'):
@@ -13,9 +14,11 @@ def generate_diff(*file_paths):
         else:
             print(f'Unsupported file type. See: "{file_path}"')
             return
+    format = format
     diff = diff_parsed(*parsed_content)
-    print(diff)
-    return diff
+    formatted_diff = formatters.stylish.format(diff)
+    print(formatted_diff)
+    return formatted_diff
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):

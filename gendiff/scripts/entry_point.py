@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import gendiff.formatters as formatters
 from gendiff.diff_generator import generate_diff
 
 
@@ -16,10 +15,8 @@ def main():
     args = parser.parse_args()
     file_path_1 = args.first_file
     file_path_2 = args.second_file
-    # format = args.format
-    diff = generate_diff(file_path_1, file_path_2)
-    formatted_diff = formatters.stylish.format(diff)
-    print(formatted_diff)
+    format = args.format
+    generate_diff(format, file_path_1, file_path_2)
 
 
 if __name__ == '__main__':
