@@ -1,7 +1,7 @@
 from gendiff.diff_generator import generate_diff
 
 
-def test_diff_parsed():
+def test_generate_diff():
 
     # JSON-тестирование
     file_path_1 = './tests/fixtures/first_file.json'
