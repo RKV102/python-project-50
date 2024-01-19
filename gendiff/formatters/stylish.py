@@ -27,16 +27,19 @@ PAIRS_OF_VALUES = {
 
 
 def format(diff, level=1):
-    formatted_diff = ''
     indent = INDENT_SYMBOL * INDENT_LEN * level
-    for key_and_value in diff.items():
-        key = key_and_value[0]
-        value = key_and_value[1]
-        value_type = type(value)
-        formatted_diff += ACTIONS_FOR_VALUE_TYPES[value_type](key, value,
-                                                              indent, level) \
-            if ACTIONS_FOR_VALUE_TYPES.get(value_type) \
-            else f'{indent}{key}: {transform(value)}\n'
+    formatted_diff = reduce(
+        lambda x, y: x + y,
+        map(
+            lambda key_and_value: ACTIONS_FOR_VALUE_TYPES[
+                type(key_and_value[1])
+            ](key_and_value[0], key_and_value[1], indent, level)
+            if ACTIONS_FOR_VALUE_TYPES.get(type(key_and_value[1]))
+            else f'{indent}{key_and_value[0]}: '
+                 + f'{transform(key_and_value[1])}\n',
+            diff.items()
+        )
+    )
     return '{\n' + formatted_diff + '}' if level == 1 else formatted_diff
 
 
