@@ -1,0 +1,2 @@
+Property 'Roadside-Picnic.authors.first-author' was updated. From [complex value] to 'Arkady Strugatsky'
+Property 'The-Time-Wanderers.origin.city' was updated. From 'Leningrad' to 'St. Petersburg'
