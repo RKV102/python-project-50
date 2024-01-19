@@ -21,12 +21,9 @@ def generate_diff(format, *file_paths):
             print(f'Unsupported file type. See: "{file_path}"')
             return
     diff = diff_parsed(*parsed_content)
-    if ACTIONS_FOR_FORMATS.get(format):
-        formatted_diff = ACTIONS_FOR_FORMATS[format](diff)
-    else:
-        print('Unsupported format')
-        return
-    print(formatted_diff)
+    print(ACTIONS_FOR_FORMATS[format](diff)) \
+        if ACTIONS_FOR_FORMATS.get(format) \
+        else print('Unsupported format')
 
 
 def diff_parsed(parsed_content_1, parsed_content_2):
