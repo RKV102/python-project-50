@@ -4,6 +4,12 @@ from gendiff.parsers_runner import run_parser
 import gendiff.formatters as formatters
 
 
+ACTIONS_FOR_FORMATS = {
+    'stylish': lambda diff: formatters.stylish.format(diff),
+    'plain': lambda diff: formatters.plain.format(diff)
+}
+
+
 def generate_diff(format, *file_paths):
     parsed_content = []
     for file_path in file_paths:
@@ -14,9 +20,12 @@ def generate_diff(format, *file_paths):
         else:
             print(f'Unsupported file type. See: "{file_path}"')
             return
-    format = format
     diff = diff_parsed(*parsed_content)
-    formatted_diff = formatters.stylish.format(diff)
+    if ACTIONS_FOR_FORMATS.get(format):
+        formatted_diff = ACTIONS_FOR_FORMATS[format](diff)
+    else:
+        print('Unsupported format')
+        return
     print(formatted_diff)
 
 

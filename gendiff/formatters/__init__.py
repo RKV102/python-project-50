@@ -1,4 +1,4 @@
-from gendiff.formatters import stylish
+from gendiff.formatters import stylish, plain
 
 
-__all__ = ('stylish')
+__all__ = ('stylish', 'plain')
