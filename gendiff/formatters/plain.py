@@ -38,7 +38,9 @@ def format(diff, input_dir=[]):
 
 
 def transform(value):
+    if isinstance(value, str):
+        return f"'{value}'"
     value_str = str(value)
     return PAIRS_OF_VALUES[value_str] \
         if PAIRS_OF_VALUES.get(value_str) \
-        else f"'{value}'"
+        else value
