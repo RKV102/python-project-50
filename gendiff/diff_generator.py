@@ -4,13 +4,13 @@ from gendiff.parsers_runner import run_parser
 import gendiff.formatters as formatters
 
 
-ACTIONS_FOR_FORMATS = {
+ACTIONS_FOR_FORMATTERS = {
     'stylish': lambda diff: formatters.stylish.format(diff),
     'plain': lambda diff: formatters.plain.format(diff)
 }
 
 
-def generate_diff(format, *file_paths):
+def generate_diff(formatter, *file_paths):
     parsed_content = []
     for file_path in file_paths:
         if file_path.endswith('json'):
@@ -21,8 +21,8 @@ def generate_diff(format, *file_paths):
             print(f'Unsupported file type. See: "{file_path}"')
             return
     diff = diff_parsed(*parsed_content)
-    print(ACTIONS_FOR_FORMATS[format](diff)) \
-        if ACTIONS_FOR_FORMATS.get(format) \
+    print(ACTIONS_FOR_FORMATTERS[formatter](diff)) \
+        if ACTIONS_FOR_FORMATTERS.get(formatter) \
         else print('Unsupported format')
 
 
