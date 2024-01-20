@@ -20,9 +20,9 @@ ACTIONS_FOR_VALUE_TYPES = {
     + ' {\n' + format(value, level + 1) + indent + '}\n'
 }
 PAIRS_OF_VALUES = {
-    True: 'true',
-    False: 'false',
-    None: 'null'
+    'True': 'true',
+    'False': 'false',
+    'None': 'null'
 }
 
 
@@ -44,4 +44,7 @@ def format(diff, level=1):
 
 
 def transform(value):
-    return PAIRS_OF_VALUES[value] if PAIRS_OF_VALUES.get(value) else value
+    value_str = str(value)
+    return PAIRS_OF_VALUES[value_str] \
+        if PAIRS_OF_VALUES.get(value_str) \
+        else value

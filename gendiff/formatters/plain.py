@@ -38,6 +38,7 @@ def format(diff, input_dir=[]):
 
 
 def transform(value):
-    return PAIRS_OF_VALUES[value] \
-        if PAIRS_OF_VALUES.get(value) \
+    value_str = str(value)
+    return PAIRS_OF_VALUES[value_str] \
+        if PAIRS_OF_VALUES.get(value_str) \
         else f"'{value}'"
