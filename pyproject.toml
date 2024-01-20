@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "The project allows you to compare JSON and YML files and display their differences in three formats"
+authors = ["Roman <laworp@yandex.ru>"]
 readme = "README.md"
 packages = [
   { include = "gendiff" },
