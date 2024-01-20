@@ -2,9 +2,9 @@ from gendiff.formatters.stylish import PAIRS_OF_VALUES
 from functools import reduce
 
 
-PAIRS_OF_VALUES['[complex value]'] = '[complex value]'
 MESSAGE_START = 'Property '
 COMPLEX_VALUE = '[complex value]'
+PAIRS_OF_VALUES[COMPLEX_VALUE] = COMPLEX_VALUE
 ACTIONS_FOR_SIGNS = {
     '+-': lambda current_dir, value: f"{MESSAGE_START}'{current_dir}'"
     + ' was updated. From '
