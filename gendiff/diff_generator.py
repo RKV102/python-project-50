@@ -16,9 +16,9 @@ ACTIONS_FOR_FILE_EXTENSIONS = {
 }
 
 
-def generate_diff(*file_paths, formatter='stylish'):
+def generate_diff(file_path1, file_path2, formatter='stylish'):
     parsed_content = []
-    for file_path in file_paths:
+    for file_path in (file_path1, file_path2):
         file_extension = get_file_extension(file_path)
         if ACTIONS_FOR_FILE_EXTENSIONS.get(file_extension):
             parsed_content.append(
