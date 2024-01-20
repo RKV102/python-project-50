@@ -21,20 +21,24 @@ ACTIONS_FOR_SIGNS = {
 }
 
 
-def format(diff, input_dir=[]):
-    return reduce(
-        lambda x, y: x + y,
-        map(
-            lambda key_and_value:
-            ACTIONS_FOR_SIGNS[key_and_value[1][-1]]
-            ('.'.join([*input_dir, key_and_value[0]]), key_and_value[1])
-            if isinstance(key_and_value[1], tuple)
-            else format(
-                key_and_value[1],
-                [*input_dir, key_and_value[0]]
-            ), diff.items()
+def format(diff):
+
+    def inner(diff, input_dir=[]):
+        return reduce(
+            lambda x, y: x + y,
+            map(
+                lambda key_and_value:
+                ACTIONS_FOR_SIGNS[key_and_value[1][-1]]
+                ('.'.join([*input_dir, key_and_value[0]]), key_and_value[1])
+                if isinstance(key_and_value[1], tuple)
+                else inner(
+                    key_and_value[1],
+                    [*input_dir, key_and_value[0]]
+                ), diff.items()
+            )
         )
-    )
+
+    return inner(diff)[:-1]
 
 
 def transform(value):
