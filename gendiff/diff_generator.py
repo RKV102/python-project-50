@@ -8,17 +8,23 @@ ACTIONS_FOR_FORMATTERS = {
     'stylish': lambda diff: formatters.stylish.format(diff),
     'plain': lambda diff: formatters.plain.format(diff)
 }
+ACTIONS_FOR_FILE_EXTENSIONS = {
+    'json': lambda file_path: run_parser(file_path, json),
+    'yaml': lambda file_path: run_parser(file_path, yaml, yaml.Loader),
+    'yml': lambda file_path: run_parser(file_path, yaml, yaml.Loader)
+}
 
 
 def generate_diff(formatter, *file_paths):
     parsed_content = []
     for file_path in file_paths:
-        if file_path.endswith('json'):
-            parsed_content.append(run_parser(file_path, json))
-        elif file_path.endswith(('yml', 'yaml')):
-            parsed_content.append(run_parser(file_path, yaml, yaml.Loader))
+        file_extension = get_file_extension(file_path)
+        if ACTIONS_FOR_FILE_EXTENSIONS.get(file_extension):
+            parsed_content.append(
+                ACTIONS_FOR_FILE_EXTENSIONS[file_extension](file_path)
+            )
         else:
-            print(f'Unsupported file type. See: "{file_path}"')
+            print(f'Unsupported file type. See: {file_path}')
             return
     diff = diff_parsed(*parsed_content)
     print(ACTIONS_FOR_FORMATTERS[formatter](diff)) \
@@ -47,3 +53,8 @@ def diff_parsed(parsed_content_1, parsed_content_2):
             diff[key] = diff_parsed(parsed_content_1[key],
                                     parsed_content_2[key])
     return diff
+
+
+def get_file_extension(file_path):
+    extension_name_start = file_path.rfind('.') + 1
+    return file_path[extension_name_start:] if extension_name_start else None
