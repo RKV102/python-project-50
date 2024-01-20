@@ -6,7 +6,8 @@ import gendiff.formatters as formatters
 
 ACTIONS_FOR_FORMATTERS = {
     'stylish': lambda diff: formatters.stylish.format(diff),
-    'plain': lambda diff: formatters.plain.format(diff)
+    'plain': lambda diff: formatters.plain.format(diff),
+    'json': lambda diff: json.dumps(diff, indent=4)
 }
 ACTIONS_FOR_FILE_EXTENSIONS = {
     'json': lambda file_path: run_parser(file_path, json),
