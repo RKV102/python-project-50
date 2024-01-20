@@ -46,7 +46,7 @@ def diff_parsed(parsed_content_1, parsed_content_2):
             diff[key] = (parsed_content_2[key], '+')
         elif parsed_content_1[key] == parsed_content_2[key]:
             diff[key] = (parsed_content_1[key], '=')
-        elif not isinstance(parsed_content_1[key], dict) or\
+        elif not isinstance(parsed_content_1[key], dict) or \
                 not isinstance(parsed_content_2[key], dict):
             diff[key] = (parsed_content_1[key], parsed_content_2[key], '+-')
         else:
