@@ -16,7 +16,7 @@ ACTIONS_FOR_FILE_EXTENSIONS = {
 }
 
 
-def generate_diff(formatter, *file_paths):
+def generate_diff(*file_paths, formatter):
     parsed_content = []
     for file_path in file_paths:
         file_extension = get_file_extension(file_path)

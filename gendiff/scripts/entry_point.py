@@ -16,7 +16,7 @@ def main():
     file_path_1 = args.first_file
     file_path_2 = args.second_file
     formatter = args.formatter
-    generate_diff(formatter, file_path_1, file_path_2)
+    generate_diff(file_path_1, file_path_2, formatter=formatter)
 
 
 if __name__ == '__main__':
