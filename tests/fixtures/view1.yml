@@ -1,0 +1,34 @@
+Roadside-Picnic:
+  nested:
+    authors:
+      nested:
+        first-author:
+          nested:
+            name:
+              nested: Arkady
+            surname:
+              nested: Strugatsky
+        second-author:
+          nested: Boris Strugatsky
+        translator:
+          nested: Olena Bormashenko
+    language:
+      nested: English
+    pages:
+      nested: 224
+    publication-year:
+      nested: 2012
+The-Time-Wanderers:
+  nested:
+    language:
+      nested: Russian
+    origin:
+      nested:
+        city:
+          nested: Leningrad
+        country:
+          nested: USSR
+    publication-year:
+      nested: 1986
+    rating:
+      nested: 10

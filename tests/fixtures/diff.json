@@ -1,0 +1,120 @@
+{
+  "common": {
+    "nested": {
+      "follow": {
+        "nested": false,
+        "action": "added"
+      },
+      "setting1": {
+        "nested": "Value 1",
+        "action": "same"
+      },
+      "setting2": {
+        "nested": 200,
+        "action": "removed"
+      },
+      "setting3": {
+        "nested": [
+          true,
+          null
+        ],
+        "action": "updated"
+      },
+      "setting4": {
+        "nested": "blah blah",
+        "action": "added"
+      },
+      "setting5": {
+        "nested": {
+          "key5": {
+            "nested": "value5"
+          }
+        },
+        "action": "added"
+      },
+      "setting6": {
+        "nested": {
+          "doge": {
+            "nested": {
+              "wow": {
+                "nested": [
+                  "",
+                  "so much"
+                ],
+                "action": "updated"
+              }
+            }
+          },
+          "key": {
+            "nested": "value",
+            "action": "same"
+          },
+          "ops": {
+            "nested": "vops",
+            "action": "added"
+          }
+        }
+      }
+    }
+  },
+  "group1": {
+    "nested": {
+      "baz": {
+        "nested": [
+          "bas",
+          "bars"
+        ],
+        "action": "updated"
+      },
+      "foo": {
+        "nested": "bar",
+        "action": "same"
+      },
+      "nest": {
+        "nested": [
+          {
+            "key": {
+              "nested": "value"
+            }
+          },
+          "str"
+        ],
+        "action": "updated"
+      }
+    }
+  },
+  "group2": {
+    "nested": {
+      "abc": {
+        "nested": 12345
+      },
+      "deep": {
+        "nested": {
+          "id": {
+            "nested": 45
+          }
+        }
+      }
+    },
+    "action": "removed"
+  },
+  "group3": {
+    "nested": {
+      "deep": {
+        "nested": {
+          "id": {
+            "nested": {
+              "number": {
+                "nested": 45
+              }
+            }
+          }
+        }
+      },
+      "fee": {
+        "nested": 100500
+      }
+    },
+    "action": "added"
+  }
+}

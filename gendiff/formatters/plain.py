@@ -1,50 +1,39 @@
-from gendiff.formatters.stylish import PAIRS_OF_VALUES
-from functools import reduce
+from gendiff.formatters.stylish import transform
 
 
 MESSAGE_START = 'Property '
 COMPLEX_VALUE = '[complex value]'
-ACTIONS_FOR_SIGNS = {
-    '+-': lambda current_dir, value: f"{MESSAGE_START}'{current_dir}'"
-    + ' was updated. From '
-    + f'{COMPLEX_VALUE if isinstance(value[0], dict) else transform(value[0])}'
+ACTIONS = {
+    'added': lambda dir, value: MESSAGE_START + dir + ' was added with value: '
+    + (COMPLEX_VALUE if isinstance(value, dict) else transform(
+        value, True
+    )) + '\n',
+    'removed': lambda dir, _: MESSAGE_START + dir + ' was removed\n',
+    'updated': lambda dir, values: MESSAGE_START + dir + ' was updated. From '
+    + (COMPLEX_VALUE if isinstance(values[0], dict) else transform(
+        values[0], True
+    ))
     + ' to '
-    + f'{COMPLEX_VALUE if isinstance(value[1], dict) else transform(value[1])}'
+    + (COMPLEX_VALUE if isinstance(values[1], dict) else transform(
+        values[1], True
+    ))
     + '\n',
-    '-': lambda current_dir, _: f"{MESSAGE_START}'{current_dir}'"
-    + ' was removed\n',
-    '+': lambda current_dir, value: MESSAGE_START
-    + f"'{current_dir}' was added with value: "
-    + f'{COMPLEX_VALUE if isinstance(value[0], dict) else transform(value[0])}'
-    + '\n',
-    '=': lambda *_: ''
+    'same': lambda *_: ''
 }
 
 
 def format(diff):
 
     def inner(diff, input_dir=[]):
-        return reduce(
-            lambda x, y: x + y,
-            map(
-                lambda key_and_value:
-                ACTIONS_FOR_SIGNS[key_and_value[1][-1]]
-                ('.'.join([*input_dir, key_and_value[0]]), key_and_value[1])
-                if isinstance(key_and_value[1], tuple)
-                else inner(
-                    key_and_value[1],
-                    [*input_dir, key_and_value[0]]
-                ), diff.items()
-            )
-        )
+        message = ''
+        for item in diff.items():
+            key = item[0]
+            value = item[1]['nested']
+            action = item[1].get('action')
+            dir = [*input_dir, key]
+            message += ACTIONS[action](transform('.'.join(dir), True), value) \
+                if action \
+                else inner(value, dir)
+        return message
 
     return inner(diff)[:-1]
-
-
-def transform(value):
-    if isinstance(value, str):
-        return f"'{value}'"
-    value_str = str(value)
-    return PAIRS_OF_VALUES[value_str] \
-        if PAIRS_OF_VALUES.get(value_str) \
-        else value

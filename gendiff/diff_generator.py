@@ -1,5 +1,6 @@
 import json
 import yaml
+from os.path import splitext
 from gendiff.parsers_runner import run_parser
 import gendiff.formatters as formatters
 
@@ -10,55 +11,92 @@ ACTIONS_FOR_FORMATTERS = {
     'json': lambda diff: json.dumps(diff, indent=4)
 }
 ACTIONS_FOR_FILE_EXTENSIONS = {
-    'json': lambda file_path: run_parser(file_path, json),
-    'yaml': lambda file_path: run_parser(file_path, yaml, yaml.Loader),
-    'yml': lambda file_path: run_parser(file_path, yaml, yaml.Loader)
+    '.json': lambda file_path: run_parser(file_path, json),
+    '.yaml': lambda file_path: run_parser(file_path, yaml, yaml.Loader),
+    '.yml': lambda file_path: run_parser(file_path, yaml, yaml.Loader)
 }
 
 
 def generate_diff(file_path1, file_path2, formatter='stylish'):
-    parsed_content = []
-    for file_path in (file_path1, file_path2):
-        file_extension = get_file_extension(file_path)
-        if ACTIONS_FOR_FILE_EXTENSIONS.get(file_extension):
-            parsed_content.append(
-                ACTIONS_FOR_FILE_EXTENSIONS[file_extension](file_path)
-            )
-        else:
-            print(f'Unsupported file type. See: {file_path}')
-            return
-    diff = diff_parsed(*parsed_content)
-    if ACTIONS_FOR_FORMATTERS.get(formatter):
-        formatted_diff = ACTIONS_FOR_FORMATTERS[formatter](diff)
-        print(formatted_diff)
-        return formatted_diff
-    else:
-        print('Unsupported format')
+    parsed_file1 = parse_file(file_path1)
+    parsed_file2 = parse_file(file_path2)
+    if not is_right_formatter(formatter) \
+            or not parsed_file1 \
+            or not parsed_file2:
+        return
+    view1 = create_view(parsed_file1)
+    view2 = create_view(parsed_file2)
+    diff = diff_views(view1, view2)
+    formatted_diff = ACTIONS_FOR_FORMATTERS[formatter](diff)
+    print(formatted_diff)
+    # print(formatted_diff)
+    return formatted_diff
 
 
-def diff_parsed(parsed_content_1, parsed_content_2):
-    keys_1, keys_2 = set(parsed_content_1.keys()), set(parsed_content_2.keys())
-    removed_keys = keys_1.difference(keys_2)
-    added_keys = keys_2.difference(keys_1)
-    united_keys = list(keys_1.union(keys_2))
+def diff_views(view1, view2):
+    keys1 = set(view1.keys())
+    keys2 = set(view2.keys())
+    removed_keys = keys1.difference(keys2)
+    added_keys = keys2.difference(keys1)
+    united_keys = list(keys1.union(keys2))
     united_keys.sort()
     diff = {}
     for key in united_keys:
         if key in removed_keys:
-            diff[key] = (parsed_content_1[key], '-')
+            diff[key] = {
+                'nested': view1[key]['nested'],
+                'action': 'removed'
+            }
         elif key in added_keys:
-            diff[key] = (parsed_content_2[key], '+')
-        elif parsed_content_1[key] == parsed_content_2[key]:
-            diff[key] = (parsed_content_1[key], '=')
-        elif not isinstance(parsed_content_1[key], dict) or \
-                not isinstance(parsed_content_2[key], dict):
-            diff[key] = (parsed_content_1[key], parsed_content_2[key], '+-')
+            diff[key] = {
+                'nested': view2[key]['nested'],
+                'action': 'added'
+            }
+        elif view1[key] == view2[key]:
+            diff[key] = {
+                'nested': view1[key]['nested'],
+                'action': 'same'
+            }
+        elif not isinstance(view1[key]['nested'], dict) or \
+                not isinstance(view2[key]['nested'], dict):
+            diff[key] = {
+                'nested': [view1[key]['nested'], view2[key]['nested']],
+                'action': 'updated'
+            }
         else:
-            diff[key] = diff_parsed(parsed_content_1[key],
-                                    parsed_content_2[key])
+            diff[key] = {
+                'nested': diff_views(
+                    view1[key]['nested'],
+                    view2[key]['nested']
+                )
+            }
     return diff
 
 
-def get_file_extension(file_path):
-    extension_name_start = file_path.rfind('.') + 1
-    return file_path[extension_name_start:] if extension_name_start else None
+def parse_file(file_path):
+    _, file_extension = splitext(file_path)
+    try:
+        return ACTIONS_FOR_FILE_EXTENSIONS[file_extension](file_path)
+    except KeyError:
+        print(f'Unsupported file type. See: {file_path}')
+
+
+def create_view(parsed_content):
+    view = {}
+    for item in parsed_content.items():
+        key = item[0]
+        value = item[1]
+        if not isinstance(value, dict):
+            view[key] = {'nested': value}
+        else:
+            view[key] = {'nested': create_view(value)}
+    return view
+
+
+def is_right_formatter(formatter):
+    try:
+        ACTIONS_FOR_FORMATTERS[formatter]
+        return True
+    except KeyError:
+        print('Unsupported format')
+        return False

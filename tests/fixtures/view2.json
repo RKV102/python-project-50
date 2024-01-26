@@ -1,0 +1,73 @@
+{
+  "common": {
+    "nested": {
+      "follow": {
+        "nested": false
+      },
+      "setting1": {
+        "nested": "Value 1"
+      },
+      "setting3": {
+        "nested": null
+      },
+      "setting4": {
+        "nested": "blah blah"
+      },
+      "setting5": {
+        "nested": {
+          "key5": {
+            "nested": "value5"
+          }
+        }
+      },
+      "setting6": {
+        "nested": {
+          "key": {
+            "nested": "value"
+          },
+          "ops": {
+            "nested": "vops"
+          },
+          "doge": {
+            "nested": {
+              "wow": {
+                "nested": "so much"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "group1": {
+    "nested": {
+      "foo": {
+        "nested": "bar"
+      },
+      "baz": {
+        "nested": "bars"
+      },
+      "nest": {
+        "nested": "str"
+      }
+    }
+  },
+  "group3": {
+    "nested": {
+      "deep": {
+        "nested": {
+          "id": {
+            "nested": {
+              "number": {
+                "nested": 45
+              }
+            }
+          }
+        }
+      },
+      "fee": {
+        "nested": 100500
+      }
+    }
+  }
+}

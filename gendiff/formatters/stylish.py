@@ -1,49 +1,66 @@
-from functools import reduce
-
-
 INDENT_LEN = 4
 INDENT_SYMBOL = ' '
-ACTIONS_FOR_VALUE_TYPES = {
-    tuple: lambda key, value, indent, level: f'{indent}{key}: '
-    + f'{transform(value[0])}\n' if value[-1] == '='
-    else reduce(lambda x, y: x + y, map(lambda i: f'{indent[:-2]}'
-                                        + f'{value[-1][-i-1]} {key}: '
-                                        + '{\n' + format(value[i],
-                                                         level + 1)
-                                        + indent + '}\n'
-                                        if isinstance(value[i], dict)
-                                        else f'{indent[:-2]}'
-                                        + f'{value[-1][-i - 1]} {key}: '
-                                        + f'{transform(value[i])}\n',
-                                        range(len(value[-1])))),
-    dict: lambda key, value, indent, level: f'{indent}{key}:'
-    + ' {\n' + format(value, level + 1) + indent + '}\n'
-}
 PAIRS_OF_VALUES = {
     'True': 'true',
     'False': 'false',
     'None': 'null'
 }
+ACTIONS_FOR_DICTS = {
+    'removed': lambda indent, key, value, level, inner: f'{indent[:-2]}- {key}:'
+    + ' {\n' + inner(value, level + 1) + indent + '}\n',
+    'added': lambda indent, key, value, level, inner: f'{indent[:-2]}+ {key}:'
+    + ' {\n' + inner(value, level + 1) + indent + '}\n'
+}
+ACTIONS_FOR_PRIMITIVES = {
+    'removed': lambda indent, key, value: f'{indent[:-2]}- {key}: '
+    + f'{transform(value)}\n',
+    'added': lambda indent, key, value: f'{indent[:-2]}+ {key}: '
+    + f'{transform(value)}\n'
+}
+ACTIONS_FOR_NON_PRIMITIVES = {
+    dict: lambda indent, key, value, level, inner, action:
+    ACTIONS_FOR_DICTS[action](indent, key, value, level + 1, inner)
+    if ACTIONS_FOR_DICTS.get(action)
+    else f'{indent}{key}:' + ' {\n' + inner(value, level + 1)
+         + indent + '}\n',
+    list: lambda indent, key, value, level, inner, _:
+    (f'{indent[:-2]}- {key}: ' + '{\n' + inner(value[0], level + 1) + indent
+     + '}\n'
+     if isinstance(value[0], dict)
+     else f'{indent[:-2]}- {key}: ' + f'{transform(value[0])}\n')
+    + (f'{indent[:-2]}+ {key}: ' + '{\n' + inner(value[1], level + 1) + indent
+       + '}\n'
+       if isinstance(value[1], dict)
+       else f'{indent[:-2]}+ {key}: ' + f'{transform(value[1])}\n')
+}
 
 
-def format(diff, level=1):
-    indent = INDENT_SYMBOL * INDENT_LEN * level
-    formatted_diff = reduce(
-        lambda x, y: x + y,
-        map(
-            lambda key_and_value: ACTIONS_FOR_VALUE_TYPES[
-                type(key_and_value[1])
-            ](key_and_value[0], key_and_value[1], indent, level)
-            if ACTIONS_FOR_VALUE_TYPES.get(type(key_and_value[1]))
-            else f'{indent}{key_and_value[0]}: '
-                 + f'{transform(key_and_value[1])}\n',
-            diff.items()
-        )
-    )
-    return '{\n' + formatted_diff + '}' if level == 1 else formatted_diff
+def format(diff):
+
+    def inner(diff, level=1):
+        indent = INDENT_SYMBOL * INDENT_LEN * level
+        message = ''
+        for item in diff.items():
+            key = item[0]
+            value = item[1]['nested']
+            value_type = type(value)
+            action = item[1].get('action')
+            if ACTIONS_FOR_NON_PRIMITIVES.get(value_type):
+                message += ACTIONS_FOR_NON_PRIMITIVES[value_type](
+                    indent, key, value, level, inner, action
+                )
+            elif ACTIONS_FOR_PRIMITIVES.get(action):
+                message += ACTIONS_FOR_PRIMITIVES[action](indent, key, value)
+            else:
+                message += f'{indent}{key}: {transform(value)}\n'
+        return message
+
+    return '{\n' + inner(diff) + '}'
 
 
-def transform(value):
+def transform(value, plain_mode=False):
+    if plain_mode and isinstance(value, str):
+        return f"'{value}'"
     value_str = str(value)
     return PAIRS_OF_VALUES[value_str] \
         if PAIRS_OF_VALUES.get(value_str) \

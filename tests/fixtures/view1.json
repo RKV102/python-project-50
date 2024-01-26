@@ -1,0 +1,60 @@
+{
+  "common": {
+    "nested": {
+      "setting1": {
+        "nested": "Value 1"
+      },
+      "setting2": {
+        "nested": 200
+      },
+      "setting3": {
+        "nested": true
+      },
+      "setting6": {
+        "nested": {
+          "key": {
+            "nested": "value"
+          },
+          "doge": {
+            "nested": {
+              "wow": {
+                "nested": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "group1": {
+    "nested": {
+      "baz": {
+        "nested": "bas"
+      },
+      "foo": {
+        "nested": "bar"
+      },
+      "nest": {
+        "nested": {
+          "key": {
+            "nested": "value"
+          }
+        }
+      }
+    }
+  },
+  "group2": {
+    "nested": {
+      "abc": {
+        "nested": 12345
+      },
+      "deep": {
+        "nested": {
+          "id": {
+            "nested": 45
+          }
+        }
+      }
+    }
+  }
+}
