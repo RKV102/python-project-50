@@ -30,4 +30,4 @@
 
 ### Просмотр результата сравнения в формате json
 
-[![asciicast](https://asciinema.org/a/XntN8UqKq4s6a5XJryLHLfcd0.svg)](https://asciinema.org/a/XntN8UqKq4s6a5XJryLHLfcd0)
+[![asciicast](https://asciinema.org/a/tDYVIPDZSGIgkQV1r6irbW6aN.svg)](https://asciinema.org/a/tDYVIPDZSGIgkQV1r6irbW6aN)
