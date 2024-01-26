@@ -29,8 +29,6 @@ def generate_diff(file_path1, file_path2, formatter='stylish'):
         return
     view1 = create_view(parsed_file1)
     view2 = create_view(parsed_file2)
-    if not view1 or not view2:
-        return
     diff = diff_views(view1, view2)
     formatted_diff = ACTIONS_FOR_FORMATTERS[formatter](diff)
     print(formatted_diff)
