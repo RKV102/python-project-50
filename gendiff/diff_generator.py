@@ -29,7 +29,6 @@ def generate_diff(file_path1, file_path2, formatter='stylish'):
     diff = diff_views(view1, view2)
     formatted_diff = ACTIONS_FOR_FORMATTERS[formatter](diff)
     print(formatted_diff)
-    # print(formatted_diff)
     return formatted_diff
 
 

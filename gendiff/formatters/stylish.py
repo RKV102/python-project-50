@@ -7,9 +7,9 @@ PAIRS_OF_VALUES = {
 }
 ACTIONS_FOR_DICTS = {
     'removed': lambda indent, key, value, level, inner: f'{indent[:-2]}- {key}:'
-    + ' {\n' + inner(value, level + 1) + indent + '}\n',
+    + ' {\n' + inner(value, level) + indent + '}\n',
     'added': lambda indent, key, value, level, inner: f'{indent[:-2]}+ {key}:'
-    + ' {\n' + inner(value, level + 1) + indent + '}\n'
+    + ' {\n' + inner(value, level) + indent + '}\n'
 }
 ACTIONS_FOR_PRIMITIVES = {
     'removed': lambda indent, key, value: f'{indent[:-2]}- {key}: '
