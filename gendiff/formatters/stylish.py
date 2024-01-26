@@ -64,4 +64,4 @@ def transform(value, plain_mode=False):
     value_str = str(value)
     return PAIRS_OF_VALUES[value_str] \
         if PAIRS_OF_VALUES.get(value_str) \
-        else value
+        else str(value)
