@@ -1,13 +1,10 @@
 import json
-import yaml
-from os.path import splitext
-from gendiff.parsers_runner import run_parser
 import gendiff.formatters as formatters
 
 
 def generate_diff(file_path1, file_path2, formatter='stylish'):
-    parsed_file1 = parse_file(file_path1)
-    parsed_file2 = parse_file(file_path2)
+    parsed_file1 = formatters.file_parser.parse_file(file_path1)
+    parsed_file2 = formatters.file_parser.parse_file(file_path2)
     view1 = create_view(parsed_file1)
     view2 = create_view(parsed_file2)
     diff = diff_views(view1, view2)
@@ -65,17 +62,6 @@ def diff_views(view1, view2):
                 )
             }
     return diff
-
-
-def parse_file(file_path):
-    _, file_extension = splitext(file_path)
-    match file_extension:
-        case '.json':
-            return run_parser(file_path, json)
-        case '.yaml' | '.yml':
-            return run_parser(file_path, yaml, yaml.Loader)
-        case _:
-            raise ValueError(f'Unsupported file type. See: {file_path}')
 
 
 def create_view(parsed_content):
