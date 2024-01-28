@@ -5,32 +5,24 @@ from gendiff.parsers_runner import run_parser
 import gendiff.formatters as formatters
 
 
-ACTIONS_FOR_FORMATTERS = {
-    'stylish': lambda diff: formatters.stylish.format(diff),
-    'plain': lambda diff: formatters.plain.format(diff),
-    'json': lambda diff: json.dumps(
-        diff,
-        indent=formatters.stylish.INDENT_LEN
-    )
-}
-ACTIONS_FOR_FILE_EXTENSIONS = {
-    '.json': lambda file_path: run_parser(file_path, json),
-    '.yaml': lambda file_path: run_parser(file_path, yaml, yaml.Loader),
-    '.yml': lambda file_path: run_parser(file_path, yaml, yaml.Loader)
-}
-
-
 def generate_diff(file_path1, file_path2, formatter='stylish'):
     parsed_file1 = parse_file(file_path1)
     parsed_file2 = parse_file(file_path2)
-    if not is_right_formatter(formatter) \
-            or not parsed_file1 \
-            or not parsed_file2:
-        return
     view1 = create_view(parsed_file1)
     view2 = create_view(parsed_file2)
     diff = diff_views(view1, view2)
-    formatted_diff = ACTIONS_FOR_FORMATTERS[formatter](diff)
+    match formatter:
+        case 'stylish':
+            formatted_diff = formatters.stylish.format(diff)
+        case 'plain':
+            formatted_diff = formatters.plain.format(diff)
+        case 'json':
+            formatted_diff = json.dumps(
+                diff,
+                indent=formatters.stylish.INDENT_LEN
+            )
+        case _:
+            raise ValueError('Unsupported format')
     print(formatted_diff)
     return formatted_diff
 
@@ -77,10 +69,13 @@ def diff_views(view1, view2):
 
 def parse_file(file_path):
     _, file_extension = splitext(file_path)
-    try:
-        return ACTIONS_FOR_FILE_EXTENSIONS[file_extension](file_path)
-    except KeyError:
-        print(f'Unsupported file type. See: {file_path}')
+    match file_extension:
+        case '.json':
+            return run_parser(file_path, json)
+        case '.yaml' | '.yml':
+            return run_parser(file_path, yaml, yaml.Loader)
+        case _:
+            raise ValueError(f'Unsupported file type. See: {file_path}')
 
 
 def create_view(parsed_content):
@@ -93,12 +88,3 @@ def create_view(parsed_content):
         else:
             view[key] = {'nested': create_view(value)}
     return view
-
-
-def is_right_formatter(formatter):
-    try:
-        ACTIONS_FOR_FORMATTERS[formatter]
-        return True
-    except KeyError:
-        print('Unsupported format')
-        return False

@@ -1,6 +1,5 @@
 import pytest
-from gendiff.diff_generator import diff_views, is_right_formatter
-from gendiff.diff_generator import create_view, parse_file
+from gendiff.diff_generator import diff_views, create_view
 from gendiff.files_loader import load_files
 
 
@@ -20,20 +19,6 @@ files = load_files(
 ])
 def test_diff_views(input, expected):
     assert diff_views(*input) == expected
-
-
-@pytest.mark.parametrize('input, expected', [
-    ('stylish', True),
-    ('plain', True),
-    ('json', True),
-    ('unknown', False)
-])
-def test_is_right_formatter(input, expected):
-    assert is_right_formatter(input) == expected
-
-
-def test_parse_file():
-    assert parse_file('unknown.png') is None
 
 
 @pytest.mark.parametrize('input, expected', [

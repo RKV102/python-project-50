@@ -5,4 +5,4 @@ def run_parser(file_path, parser, loader=None):
                 else parser.load(file_content, Loader=loader)
         return parsed_content
     except FileNotFoundError:
-        print(f'No such file or directory. See: {file_path}')
+        raise FileNotFoundError(f'No such file or directory. See: {file_path}')

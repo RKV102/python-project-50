@@ -5,34 +5,6 @@ PAIRS_OF_VALUES = {
     'False': 'false',
     'None': 'null'
 }
-ACTIONS_FOR_DICTS = {
-    'removed': lambda indent, key, value, level, inner: f'{indent[:-2]}- {key}:'
-    + ' {\n' + inner(value, level) + indent + '}\n',
-    'added': lambda indent, key, value, level, inner: f'{indent[:-2]}+ {key}:'
-    + ' {\n' + inner(value, level) + indent + '}\n'
-}
-ACTIONS_FOR_PRIMITIVES = {
-    'removed': lambda indent, key, value: f'{indent[:-2]}- {key}: '
-    + f'{transform(value)}\n',
-    'added': lambda indent, key, value: f'{indent[:-2]}+ {key}: '
-    + f'{transform(value)}\n'
-}
-ACTIONS_FOR_NON_PRIMITIVES = {
-    dict: lambda indent, key, value, level, inner, action:
-    ACTIONS_FOR_DICTS[action](indent, key, value, level + 1, inner)
-    if ACTIONS_FOR_DICTS.get(action)
-    else f'{indent}{key}:' + ' {\n' + inner(value, level + 1)
-         + indent + '}\n',
-    list: lambda indent, key, value, level, inner, _:
-    (f'{indent[:-2]}- {key}: ' + '{\n' + inner(value[0], level + 1) + indent
-     + '}\n'
-     if isinstance(value[0], dict)
-     else f'{indent[:-2]}- {key}: ' + f'{transform(value[0])}\n')
-    + (f'{indent[:-2]}+ {key}: ' + '{\n' + inner(value[1], level + 1) + indent
-       + '}\n'
-       if isinstance(value[1], dict)
-       else f'{indent[:-2]}+ {key}: ' + f'{transform(value[1])}\n')
-}
 
 
 def format(diff):
@@ -43,25 +15,56 @@ def format(diff):
         for item in diff.items():
             key = item[0]
             value = item[1]['nested']
-            value_type = type(value)
+            value_type = str(type(value))[8:-2]
             action = item[1].get('action')
-            if ACTIONS_FOR_NON_PRIMITIVES.get(value_type):
-                message += ACTIONS_FOR_NON_PRIMITIVES[value_type](
-                    indent, key, value, level, inner, action
-                )
-            elif ACTIONS_FOR_PRIMITIVES.get(action):
-                message += ACTIONS_FOR_PRIMITIVES[action](indent, key, value)
-            else:
-                message += f'{indent}{key}: {transform(value)}\n'
+            message_start = f'{indent[:-2]}'
+            match value_type:
+                case 'dict':
+                    message_end = create_message_end(key, value, indent, level,
+                                                     inner)
+                    message += create_message(message_start, message_end,
+                                              action, indent)
+                case 'list':
+                    for i in ((value[0], '-'), (value[1], '+')):
+                        if isinstance(i[0], dict):
+                            message_end = create_message_end(key, i[0], indent,
+                                                             level, inner)
+                        else:
+                            message_end = create_message_end(key, i[0])
+                        message += create_message(message_start, message_end,
+                                                  sign=i[1])
+                case _:
+                    message_end = create_message_end(key, value)
+                    message += create_message(message_start, message_end,
+                                              action, indent)
         return message
 
     return '{\n' + inner(diff) + '}'
+
+
+def create_message_end(key, value, indent=None, level=None, inner=None):
+    if not indent:
+        return f'{key}: {transform(value)}\n'
+    return f'{key}:' + ' {\n' + inner(value, level + 1) + indent + '}\n'
+
+
+def create_message(message_start, message_end, action=None, indent=None,
+                   sign=None):
+    if not indent:
+        return f'{message_start}{sign} {message_end}'
+    match action:
+        case 'removed':
+            return f'{message_start}- {message_end}'
+        case 'added':
+            return f'{message_start}+ {message_end}'
+        case _:
+            return f'{indent}{message_end}'
 
 
 def transform(value, plain_mode=False):
     if plain_mode and isinstance(value, str):
         return f"'{value}'"
     value_str = str(value)
-    return PAIRS_OF_VALUES[value_str] \
-        if PAIRS_OF_VALUES.get(value_str) \
-        else str(value)
+    if PAIRS_OF_VALUES.get(value_str):
+        return PAIRS_OF_VALUES[value_str]
+    return str(value)

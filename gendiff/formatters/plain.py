@@ -3,23 +3,6 @@ from gendiff.formatters.stylish import transform
 
 MESSAGE_START = 'Property '
 COMPLEX_VALUE = '[complex value]'
-ACTIONS = {
-    'added': lambda dir, value: MESSAGE_START + dir + ' was added with value: '
-    + (COMPLEX_VALUE if isinstance(value, dict) else transform(
-        value, True
-    )) + '\n',
-    'removed': lambda dir, _: MESSAGE_START + dir + ' was removed\n',
-    'updated': lambda dir, values: MESSAGE_START + dir + ' was updated. From '
-    + (COMPLEX_VALUE if isinstance(values[0], dict) else transform(
-        values[0], True
-    ))
-    + ' to '
-    + (COMPLEX_VALUE if isinstance(values[1], dict) else transform(
-        values[1], True
-    ))
-    + '\n',
-    'same': lambda *_: ''
-}
 
 
 def format(diff):
@@ -31,9 +14,31 @@ def format(diff):
             value = item[1]['nested']
             action = item[1].get('action')
             dir = [*input_dir, key]
-            message += ACTIONS[action](transform('.'.join(dir), True), value) \
-                if action \
-                else inner(value, dir)
+            transformed_dir = transform('.'.join(dir), True)
+            match action:
+                case 'removed':
+                    message += (MESSAGE_START + transformed_dir
+                                + ' was removed\n')
+                case 'added':
+                    message += (MESSAGE_START + transformed_dir
+                                + ' was added with value: '
+                                + (COMPLEX_VALUE if isinstance(value, dict)
+                                   else transform(value, True))
+                                + '\n')
+                case 'updated':
+                    message += (MESSAGE_START + transformed_dir
+                                + ' was updated. From '
+                                + ' to '.join(
+                                    [COMPLEX_VALUE
+                                     if isinstance(sub_value, dict)
+                                     else transform(sub_value, True)
+                                     for sub_value in value]
+                                )
+                                + '\n')
+                case 'same':
+                    pass
+                case _:
+                    message += inner(value, dir)
         return message
 
     return inner(diff)[:-1]
