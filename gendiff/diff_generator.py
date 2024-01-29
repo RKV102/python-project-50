@@ -1,10 +1,11 @@
 import json
 import gendiff.formatters as formatters
+from gendiff.file_parser_via_formatter import parse_file
 
 
 def generate_diff(file_path1, file_path2, formatter='stylish'):
-    parsed_file1 = formatters.file_parser.parse_file(file_path1)
-    parsed_file2 = formatters.file_parser.parse_file(file_path2)
+    parsed_file1 = parse_file(file_path1)
+    parsed_file2 = parse_file(file_path2)
     view1 = create_view(parsed_file1)
     view2 = create_view(parsed_file2)
     diff = diff_views(view1, view2)
