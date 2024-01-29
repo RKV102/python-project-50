@@ -1,11 +1,11 @@
-FILE_PATH_START = './tests/fixtures/'
+FIXTURE_PATH_START = './tests/fixtures/'
 
 
-def get_file_path(file_name):
-    return f'{FILE_PATH_START}{file_name}'
+def get_fixture_path(fixture_name):
+    return f'{FIXTURE_PATH_START}{fixture_name}'
 
 
-def load_file(file_name):
-    file_path = get_file_path(file_name)
-    with open(file_path) as opened_file:
-        return opened_file.read()
+def load_fixture_content(fixture_name):
+    fixture_path = get_fixture_path(fixture_name)
+    with open(fixture_path) as opened_fixture:
+        return opened_fixture.read()
