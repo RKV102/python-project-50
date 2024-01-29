@@ -1,6 +1,6 @@
 import pytest
 from gendiff.diff_generator import generate_diff
-from gendiff.file_handler import get_file_path, load_file
+from tests.fixture_handler import get_file_path, load_file
 
 
 @pytest.mark.parametrize('input1, input2, formatter, expected', [
