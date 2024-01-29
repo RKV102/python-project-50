@@ -20,7 +20,6 @@ def generate_diff(file_path1, file_path2, formatter='stylish'):
             )
         case _:
             raise ValueError('Unsupported format')
-    print(formatted_diff)
     return formatted_diff
 
 

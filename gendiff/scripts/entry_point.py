@@ -5,7 +5,9 @@ from gendiff.diff_generator import generate_diff
 
 def main():
     file_path_1, file_path_2, formatter = run_argparse()
-    generate_diff(file_path_1, file_path_2, formatter=formatter)
+    formatted_diff = generate_diff(file_path_1, file_path_2,
+                                   formatter=formatter)
+    print(formatted_diff)
 
 
 if __name__ == '__main__':
