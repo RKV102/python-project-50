@@ -1,6 +1,5 @@
-import json
-import gendiff.formatters as formatters
 from gendiff.file_parser_via_formatter import parse_file
+from gendiff.formatters.diff_formatter import format_diff
 
 
 def generate_diff(file_path1, file_path2, formatter='stylish'):
@@ -9,19 +8,7 @@ def generate_diff(file_path1, file_path2, formatter='stylish'):
     view1 = create_view(parsed_file1)
     view2 = create_view(parsed_file2)
     diff = diff_views(view1, view2)
-    match formatter:
-        case 'stylish':
-            formatted_diff = formatters.stylish.format(diff)
-        case 'plain':
-            formatted_diff = formatters.plain.format(diff)
-        case 'json':
-            formatted_diff = json.dumps(
-                diff,
-                indent=formatters.stylish.INDENT_LEN
-            )
-        case _:
-            raise ValueError('Unsupported format')
-    return formatted_diff
+    return format_diff(formatter, diff)
 
 
 def diff_views(view1, view2):
