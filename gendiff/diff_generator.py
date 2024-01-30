@@ -5,59 +5,42 @@ from gendiff.formatters.diff_formatter import format_diff
 def generate_diff(file_path1, file_path2, formatter='stylish'):
     parsed_file1 = parse_file(file_path1)
     parsed_file2 = parse_file(file_path2)
-    view1 = create_view(parsed_file1)
-    view2 = create_view(parsed_file2)
-    diff = diff_views(view1, view2)
+    diff = diff_parsed(parsed_file1, parsed_file2)
     return format_diff(formatter, diff)
 
 
-def diff_views(view1, view2):
-    keys1 = set(view1.keys())
-    keys2 = set(view2.keys())
+def diff_parsed(parsed1, parsed2={}, was_action=False):
+    if not isinstance(parsed1, dict):
+        return parsed1
+    view = {}
+    keys1 = set(parsed1.keys())
+    keys2 = set(parsed2.keys())
     removed_keys = keys1.difference(keys2)
     added_keys = keys2.difference(keys1)
     united_keys = list(keys1.union(keys2))
     united_keys.sort()
-    diff = {}
     for key in united_keys:
         if key in removed_keys:
-            diff[key] = {
-                'nested': view1[key]['nested'],
-                'action': 'removed'
-            }
+            view[key] = {'nested': diff_parsed(parsed1[key], was_action=True)}
+            check_action(was_action, 'removed', view[key])
         elif key in added_keys:
-            diff[key] = {
-                'nested': view2[key]['nested'],
-                'action': 'added'
-            }
-        elif view1[key] == view2[key]:
-            diff[key] = {
-                'nested': view1[key]['nested'],
-                'action': 'same'
-            }
-        elif not isinstance(view1[key]['nested'], dict) or \
-                not isinstance(view2[key]['nested'], dict):
-            diff[key] = {
-                'nested': [view1[key]['nested'], view2[key]['nested']],
-                'action': 'updated'
-            }
+            view[key] = {'nested': diff_parsed(parsed2[key], was_action=True)}
+            check_action(was_action, 'added', view[key])
+        elif parsed1[key] == parsed2[key]:
+            view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key],
+                                               was_action=True)}
+            check_action(was_action, 'same', view[key])
+        elif (not isinstance(parsed1[key], dict)
+              or not isinstance(parsed2[key], dict)):
+            view[key] = {'nested': [diff_parsed(parsed1[key], was_action=True),
+                                    diff_parsed(parsed2[key], was_action=True)]}
+            check_action(was_action, 'updated', view[key])
         else:
-            diff[key] = {
-                'nested': diff_views(
-                    view1[key]['nested'],
-                    view2[key]['nested']
-                )
-            }
-    return diff
+            view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key])}
 
-
-def create_view(parsed_content):
-    view = {}
-    for item in parsed_content.items():
-        key = item[0]
-        value = item[1]
-        if not isinstance(value, dict):
-            view[key] = {'nested': value}
-        else:
-            view[key] = {'nested': create_view(value)}
     return view
+
+
+def check_action(was_action, action_name, key_of_view):
+    if not was_action:
+        key_of_view['action'] = action_name
