@@ -20,9 +20,9 @@ def diff_parsed(parsed1, parsed2={}, was_action=False):
     united_keys = list(keys1.union(keys2))
     united_keys.sort()
     for key in united_keys:
-        if is_in_added_or_removed_keys(key, removed_keys, added_keys,
-                                       was_action=was_action, view=view,
-                                       parsed1=parsed1, parsed2=parsed2):
+        if key_in_added_or_removed_keys(key, removed_keys, added_keys,
+                                        was_action=was_action, view=view,
+                                        parsed1=parsed1, parsed2=parsed2):
             continue
         elif parsed1[key] == parsed2[key]:
             view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key],
@@ -44,7 +44,7 @@ def check_action(was_action, action, key_of_view):
         key_of_view['action'] = action
 
 
-def is_in_added_or_removed_keys(key, removed_keys, added_keys, **kwargs):
+def key_in_added_or_removed_keys(key, removed_keys, added_keys, **kwargs):
     action = None
     parsed = None
     if key in removed_keys:
