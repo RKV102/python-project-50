@@ -21,15 +21,9 @@ def diff_parsed(parsed1, parsed2={}, was_action=False):
     united_keys.sort()
     for key in united_keys:
         if key in removed_keys:
-            view[key] = {'nested': diff_parsed(parsed1[key], was_action=True),
-                         'action': 'removed'} \
-                if not was_action \
-                else {'nested': diff_parsed(parsed1[key], was_action=True)}
+            view[key] = add_to_view(parsed1, key, 'removed', was_action)
         elif key in added_keys:
-            view[key] = {'nested': diff_parsed(parsed2[key], was_action=True),
-                         'action': 'added'} \
-                if not was_action \
-                else {'nested': diff_parsed(parsed2[key], was_action=True)}
+            view[key] = add_to_view(parsed2, key, 'added', was_action)
         elif parsed1[key] == parsed2[key]:
             view[key] = {'nested': diff_parsed(parsed1[key], was_action=True),
                          'action': 'same'}
@@ -41,3 +35,9 @@ def diff_parsed(parsed1, parsed2={}, was_action=False):
                                  diff_parsed(parsed2[key], was_action=True)],
                       'action': 'updated'}
     return view
+
+
+def add_to_view(parsed, key, action, was_action):
+    return {'nested': diff_parsed(parsed[key], was_action=True),
+            'action': action} if not was_action \
+        else {'nested': diff_parsed(parsed[key], was_action=True)}
