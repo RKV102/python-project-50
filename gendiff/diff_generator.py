@@ -21,22 +21,23 @@ def diff_parsed(parsed1, parsed2={}, was_action=False):
     united_keys.sort()
     for key in united_keys:
         if key in removed_keys:
-            add_to_view(view, key, parsed1, 'removed', was_action)
+            view[key] = {'nested': diff_parsed(parsed1[key], was_action=True),
+                         'action': 'removed'} \
+                if not was_action \
+                else {'nested': diff_parsed(parsed1[key], was_action=True)}
         elif key in added_keys:
-            add_to_view(view, key, parsed2, 'added', was_action)
+            view[key] = {'nested': diff_parsed(parsed2[key], was_action=True),
+                         'action': 'added'} \
+                if not was_action \
+                else {'nested': diff_parsed(parsed2[key], was_action=True)}
         elif parsed1[key] == parsed2[key]:
-            add_to_view(view, key, parsed1, 'same', was_action)
-        elif isinstance(parsed1[key], dict) and isinstance(parsed2[key], dict):
-            view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key])}
+            view[key] = {'nested': diff_parsed(parsed1[key], was_action=True),
+                         'action': 'same'}
         else:
-            view[key] = {'nested': [diff_parsed(parsed1[key], was_action=True),
-                                    diff_parsed(parsed2[key], was_action=True)],
-                         'action': 'updated'}
+            view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key])} \
+                if (isinstance(parsed1[key], dict)
+                    and isinstance(parsed2[key], dict)) \
+                else {'nested': [diff_parsed(parsed1[key], was_action=True),
+                                 diff_parsed(parsed2[key], was_action=True)],
+                      'action': 'updated'}
     return view
-
-
-def add_to_view(view, key, source, action, was_action):
-    view[key] = {'nested': diff_parsed(source[key], was_action=True),
-                 'action': action} \
-        if not was_action \
-        else {'nested': diff_parsed(source[key], was_action=True)}
