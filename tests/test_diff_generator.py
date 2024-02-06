@@ -10,5 +10,8 @@ from tests.fixture_handler import get_fixture_path, load_fixture_content
     ('first.yml', 'second.yml', 'plain', 'plain_yml.txt')
 ])
 def test_generate_diff(input1, input2, formatter, output):
-    assert generate_diff(get_fixture_path(input1), get_fixture_path(input2),
-                         formatter) == load_fixture_content(output)
+    assert generate_diff(
+        get_fixture_path(input1),
+        get_fixture_path(input2),
+        formatter
+    ) == load_fixture_content(get_fixture_path(output))
