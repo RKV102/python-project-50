@@ -1,10 +1,5 @@
 INDENT_LEN = 4
 INDENT_SYMBOL = ' '
-PAIRS_OF_VALUES = {
-    'True': 'true',
-    'False': 'false',
-    'None': 'null'
-}
 
 
 def format(diff, level=1):
@@ -65,7 +60,12 @@ def create_message(message_start, message_end, **kwargs):
 def transform(value, plain_mode=False):
     if plain_mode and isinstance(value, str):
         return f"'{value}'"
-    value_str = str(value)
-    if PAIRS_OF_VALUES.get(value_str):
-        return PAIRS_OF_VALUES[value_str]
-    return str(value)
+    match value:
+        case True:
+            return 'true'
+        case False:
+            return 'false'
+        case None:
+            return 'null'
+        case _:
+            return str(value)
