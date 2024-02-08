@@ -9,7 +9,7 @@ PAIRS_OF_VALUES = {
 
 def format(diff, level=1):
     indent = INDENT_SYMBOL * INDENT_LEN * level
-    message = ''
+    message = []
     for item in diff.items():
         key = item[0]
         value = item[1]['nested']
@@ -22,8 +22,8 @@ def format(diff, level=1):
                                                  indent=indent,
                                                  level=level,
                                                  format=format)
-                message += create_message(message_start, message_end,
-                                          action=action, indent=indent)
+                message.append(create_message(message_start, message_end,
+                                              action=action, indent=indent))
             case 'list':
                 for i in ((value[0], '-'), (value[1], '+')):
                     if isinstance(i[0], dict):
@@ -33,13 +33,14 @@ def format(diff, level=1):
                                                          format=format)
                     else:
                         message_end = create_message_end(key, i[0])
-                    message += create_message(message_start, message_end,
-                                              sign=i[1])
+                    message.append(create_message(message_start, message_end,
+                                                  sign=i[1]))
             case _:
                 message_end = create_message_end(key, value)
-                message += create_message(message_start, message_end,
-                                          action=action, indent=indent)
-    return '{\n' + message + '}' if level == 1 else message
+                message.append(create_message(message_start, message_end,
+                                              action=action, indent=indent))
+    message_str = ''.join(message)
+    return '{\n' + message_str + '}' if level == 1 else message_str
 
 
 def create_message_end(key, value, **kwargs):
