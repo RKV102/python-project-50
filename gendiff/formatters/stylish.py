@@ -15,8 +15,7 @@ def format(diff, level=1):
             case 'dict':
                 message_end = create_message_end(key, value,
                                                  indent=indent,
-                                                 level=level,
-                                                 format=format)
+                                                 level=level)
                 message.append(create_message(message_start, message_end,
                                               action=action, indent=indent))
             case 'list':
@@ -24,8 +23,7 @@ def format(diff, level=1):
                     if isinstance(i[0], dict):
                         message_end = create_message_end(key, i[0],
                                                          indent=indent,
-                                                         level=level,
-                                                         format=format)
+                                                         level=level)
                     else:
                         message_end = create_message_end(key, i[0])
                     message.append(create_message(message_start, message_end,
@@ -39,22 +37,26 @@ def format(diff, level=1):
 
 
 def create_message_end(key, value, **kwargs):
-    if not kwargs.get('indent'):
+    indent = kwargs.get('indent')
+    if not indent:
         return f'{key}: {transform(value)}\n'
-    return (f'{key}:' + ' {\n' + kwargs['format'](value, kwargs['level'] + 1)
-            + kwargs['indent'] + '}\n')
+    level = kwargs['level']
+    return f'{key}:' + ' {\n' + format(value, level + 1) + indent + '}\n'
 
 
 def create_message(message_start, message_end, **kwargs):
-    if not kwargs.get('indent'):
-        return message_start + kwargs['sign'] + f' {message_end}'
-    match kwargs['action']:
+    indent = kwargs.get('indent')
+    if not indent:
+        sign = kwargs['sign']
+        return message_start + sign + f' {message_end}'
+    action = kwargs['action']
+    match action:
         case 'removed':
             return f'{message_start}- {message_end}'
         case 'added':
             return f'{message_start}+ {message_end}'
         case _:
-            return kwargs['indent'] + message_end
+            return indent + message_end
 
 
 def transform(value, plain_mode=False):
