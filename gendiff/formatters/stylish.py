@@ -7,9 +7,9 @@ def format(diff, level=1):
     message = []
     for item in diff.items():
         key = item[0]
-        value = item[1]['nested']
+        value = item[1]['value']
         value_type = str(type(value))[8:-2]
-        action = item[1].get('action')
+        status = item[1].get('status')
         message_start = f'{indent[:-2]}'
         match value_type:
             case 'dict':
@@ -17,7 +17,7 @@ def format(diff, level=1):
                                                  indent=indent,
                                                  level=level)
                 message.append(create_message(message_start, message_end,
-                                              action=action, indent=indent))
+                                              status=status, indent=indent))
             case 'list':
                 for i in ((value[0], '-'), (value[1], '+')):
                     if isinstance(i[0], dict):
@@ -31,7 +31,7 @@ def format(diff, level=1):
             case _:
                 message_end = create_message_end(key, value)
                 message.append(create_message(message_start, message_end,
-                                              action=action, indent=indent))
+                                              status=status, indent=indent))
     message_str = ''.join(message)
     return '{\n' + message_str + '}' if level == 1 else message_str
 
@@ -49,8 +49,8 @@ def create_message(message_start, message_end, **kwargs):
     if not indent:
         sign = kwargs['sign']
         return message_start + sign + f' {message_end}'
-    action = kwargs['action']
-    match action:
+    status = kwargs['status']
+    match status:
         case 'removed':
             return f'{message_start}- {message_end}'
         case 'added':

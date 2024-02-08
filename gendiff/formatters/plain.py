@@ -13,11 +13,11 @@ def format_inner(diff, input_dir=[]):
     message = []
     for item in diff.items():
         key = item[0]
-        value = item[1]['nested']
-        action = item[1].get('action')
+        value = item[1]['value']
+        status = item[1].get('status')
         dir = [*input_dir, key]
         transformed_dir = transform('.'.join(dir), True)
-        match action:
+        match status:
             case 'removed':
                 message.append(MESSAGE_START + transformed_dir
                                + ' was removed\n')

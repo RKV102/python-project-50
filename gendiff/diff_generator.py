@@ -19,20 +19,20 @@ def diff_parsed(parsed1, parsed2):
     united_keys.sort()
     for key in united_keys:
         if key in removed_keys:
-            view[key] = {'nested': create_view(parsed1[key]),
-                         'action': 'removed'}
+            view[key] = {'value': create_view(parsed1[key]),
+                         'status': 'removed'}
         elif key in added_keys:
-            view[key] = {'nested': create_view(parsed2[key]),
-                         'action': 'added'}
+            view[key] = {'value': create_view(parsed2[key]),
+                         'status': 'added'}
         elif parsed1[key] == parsed2[key]:
-            view[key] = {'nested': create_view(parsed1[key]),
-                         'action': 'same'}
+            view[key] = {'value': create_view(parsed1[key]),
+                         'status': 'same'}
         elif isinstance(parsed1[key], dict) and isinstance(parsed2[key], dict):
-            view[key] = {'nested': diff_parsed(parsed1[key], parsed2[key])}
+            view[key] = {'value': diff_parsed(parsed1[key], parsed2[key])}
         else:
-            view[key] = {'nested': [create_view(parsed1[key]),
-                                    create_view(parsed2[key])],
-                         'action': 'updated'}
+            view[key] = {'value': [create_view(parsed1[key]),
+                                   create_view(parsed2[key])],
+                         'status': 'updated'}
     return view
 
 
@@ -41,5 +41,5 @@ def create_view(dict_):
         return dict_
     view = {}
     for key, value in dict_.items():
-        view[key] = {'nested': create_view(value)}
+        view[key] = {'value': create_view(value)}
     return view
