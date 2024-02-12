@@ -6,40 +6,44 @@ def format(diff):
     return '{\n' + format_inner(diff) + '}'
 
 
-def format_inner(diff, level=1):
+def format_inner(diff, level=1, was_status=False):
     indent = INDENT_SYMBOL * INDENT_LEN * level
-    message = []
-    for item in diff.items():
-        key = item[0]
-        value = item[1]['value']
-        status = item[1].get('status')
-        indent_before_the_sign = f'{indent[:-2]}'
+    indent_before_the_sign = f'{indent[:-2]}'
+    messages = []
+    for key, value_and_status in diff.items():
+        (value, status) = (value_and_status[0], value_and_status[1]) \
+            if not was_status else (value_and_status, None)
         match status:
             case 'removed':
-                appended = (f'{indent_before_the_sign}- {key}: '
-                            + ('{\n' + format_inner(value, level + 1) + indent
-                               + '}' if isinstance(value, dict)
-                               else transform(value)) + '\n')
+                messages.append(f'{indent_before_the_sign}- {key}: '
+                                + ('{\n' + format_inner(value, level + 1, True)
+                                   + indent + '}' if isinstance(value, dict)
+                                   else transform(value)) + '\n')
             case 'added':
-                appended = (f'{indent_before_the_sign}+ {key}: '
-                            + ('{\n' + format_inner(value, level + 1) + indent
-                               + '}' if isinstance(value, dict)
-                               else transform(value)) + '\n')
+                messages.append(f'{indent_before_the_sign}+ {key}: '
+                                + ('{\n' + format_inner(value, level + 1, True)
+                                   + indent + '}' if isinstance(value, dict)
+                                   else transform(value)) + '\n')
             case 'updated':
                 appended = []
-                for value, sign in ((value[0], '-'), (value[1], '+')):
+                for value_, sign in ((value[0], '-'), (value[1], '+')):
                     appended.append(f'{indent_before_the_sign}{sign} {key}: '
-                                    + ('{\n' + format_inner(value, level + 1)
-                                       + indent + '}' if isinstance(value, dict)
-                                       else transform(value)) + '\n')
-                appended = ''.join(appended)
+                                    + ('{\n' + format_inner(value_, level + 1,
+                                                            True)
+                                       + indent + '}'
+                                       if isinstance(value_, dict)
+                                       else transform(value_)) + '\n')
+                messages.append(''.join(appended))
+            case 'nested':
+                messages.append(f'{indent}{key}: ' + '{\n'
+                                + format_inner(value, level + 1) + indent + '}'
+                                + '\n')
             case _:
-                appended = (f'{indent}{key}: '
-                            + ('{\n' + format_inner(value, level + 1) + indent
-                               + '}' if isinstance(value, dict)
-                               else transform(value)) + '\n')
-        message.append(appended)
-    return ''.join(message)
+                messages.append(f'{indent}{key}: '
+                                + ('{\n' + format_inner(value, level + 1, True)
+                                   + indent + '}' if isinstance(value, dict)
+                                   else transform(value)) + '\n')
+    return ''.join(messages)
 
 
 def transform(value, plain_mode=False):
