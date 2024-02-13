@@ -10,10 +10,10 @@ def parse_file(file_path):
 
 
 def load_to_parser(file_content, file_extension, file_path):
-    match file_extension:
-        case '.json':
+    match file_extension[1:]:
+        case 'json':
             return json.load(file_content)
-        case '.yaml' | '.yml':
+        case 'yaml' | 'yml':
             return yaml.load(file_content, Loader=yaml.Loader)
         case _:
             raise ValueError(f'Unsupported file type. See: {file_path}')
