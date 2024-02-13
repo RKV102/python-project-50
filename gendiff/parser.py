@@ -16,4 +16,4 @@ def parse(file_content, file_extension):
         case 'yaml' | 'yml':
             return yaml.load(file_content, Loader=yaml.Loader)
         case _:
-            raise ValueError(f'Unsupported file type.')
+            raise ValueError('Unsupported file type.')
