@@ -13,27 +13,33 @@ def format_inner(diff, input_dir=()):
     messages = []
     for key, (value, status) in diff.items():
         dir = (*input_dir, key)
-        transformed_dir = transform('.'.join(dir), True)
+        dir_with_quotes = make_quotes('.'.join(dir))
         match status:
             case 'removed':
-                messages.append(MESSAGE_START + transformed_dir
+                messages.append(MESSAGE_START + dir_with_quotes
                                 + ' was removed\n')
             case 'added':
-                messages.append(MESSAGE_START + transformed_dir
+                messages.append(MESSAGE_START + dir_with_quotes
                                 + ' was added with value: '
                                 + (COMPLEX_VALUE if isinstance(value, dict)
-                                   else transform(value, True))
+                                   else make_quotes(value))
                                 + '\n')
             case 'nested':
                 messages.append(format_inner(value, dir))
             case 'updated':
-                messages.append(MESSAGE_START + transformed_dir
+                messages.append(MESSAGE_START + dir_with_quotes
                                 + ' was updated. From '
                                 + ' to '.join(
                                   [COMPLEX_VALUE
                                    if isinstance(sub_value, dict)
-                                   else transform(sub_value, True)
+                                   else make_quotes(sub_value)
                                    for sub_value in value]
                                 )
                                 + '\n')
     return ''.join(messages)
+
+
+def make_quotes(value):
+    transformed_value = transform(value)
+    return f"'{transformed_value}'" if isinstance(value, str) \
+        else transformed_value

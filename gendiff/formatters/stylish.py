@@ -46,15 +46,13 @@ def format_inner(diff, level=1, was_status=False):
     return ''.join(messages)
 
 
-def transform(value, plain_mode=False):
-    if plain_mode and isinstance(value, str):
-        return f"'{value}'"
-    match value:
-        case True:
-            return 'true'
-        case False:
-            return 'false'
-        case None:
+def transform(value):
+    match str(type(value))[8:-2]:
+        case 'bool':
+            return str(value).lower()
+        case 'NoneType':
             return 'null'
+        case 'str':
+            return value
         case _:
             return str(value)
