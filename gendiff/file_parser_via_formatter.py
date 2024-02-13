@@ -5,11 +5,8 @@ from os.path import splitext
 
 def parse_file(file_path):
     _, file_extension = splitext(file_path)
-    try:
-        with open(file_path) as opened_file:
-            return load_to_parser(opened_file, file_extension, file_path)
-    except FileNotFoundError:
-        raise FileNotFoundError(f'No such file or directory. See: {file_path}')
+    with open(file_path) as opened_file:
+        return load_to_parser(opened_file, file_extension, file_path)
 
 
 def load_to_parser(opened_file, file_extension, file_path):
