@@ -3,7 +3,7 @@ import yaml
 from os.path import splitext
 
 
-def parse_file(file_path):
+def parse(file_path):
     _, file_extension = splitext(file_path)
     with open(file_path) as file_content:
         return load_to_parser(file_content, file_extension)
