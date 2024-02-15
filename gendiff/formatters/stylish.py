@@ -1,5 +1,4 @@
-INDENT_LEN = 4
-INDENT_SYMBOL = ' '
+from gendiff.formatters.__init__ import INDENT_LEN, INDENT_SYMBOL
 
 
 def format(diff):

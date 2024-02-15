@@ -1,5 +1,6 @@
 import json
 from gendiff.formatters import stylish, plain
+from gendiff.formatters.__init__ import INDENT_LEN
 
 
 def format_diff(formatter, diff):
@@ -11,7 +12,7 @@ def format_diff(formatter, diff):
         case 'json':
             return json.dumps(
                 diff,
-                indent=stylish.INDENT_LEN
+                indent=INDENT_LEN
             )
         case _:
             raise ValueError('Unsupported format')

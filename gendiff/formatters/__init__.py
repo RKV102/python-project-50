@@ -1,0 +1,2 @@
+INDENT_LEN = 4
+INDENT_SYMBOL = ' '
