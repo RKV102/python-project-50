@@ -16,34 +16,36 @@ def format_inner(diff, level=1, was_status=False):
         match status:
             case 'removed':
                 lines.append(f'{indent_before_the_sign}- {key}: '
-                             + transform(value, level, indent, status))
+                             + construct(value, level, indent, status))
             case 'added':
                 lines.append(f'{indent_before_the_sign}+ {key}: '
-                             + transform(value, level, indent, status))
+                             + construct(value, level, indent, status))
             case 'updated':
                 appended = []
                 for value_, sign in ((value[0], '-'), (value[1], '+')):
                     appended.append(f'{indent_before_the_sign}{sign} {key}: '
-                                    + transform(value_, level, indent, status))
+                                    + construct(value_, level, indent, status))
                 lines.append(''.join(appended))
+            case 'nested':
+                lines.append(f'{indent}{key}: '
+                             + construct(value, level, indent, False))
             case _:
                 lines.append(f'{indent}{key}: '
-                             + transform(value, level, indent, status))
+                             + construct(value, level, indent, True))
     return ''.join(lines)
 
 
-def transform(value, level, indent, status):
+def construct(value, level, indent, was_status=None):
     match str(type(value))[8:-2]:
         case 'bool':
-            transformed = str(value).lower()
+            constructed = str(value).lower()
         case 'NoneType':
-            transformed = 'null'
+            constructed = 'null'
         case 'str':
-            transformed = value
+            constructed = value
         case 'dict':
-            was_status = False if status == 'nested' else True
-            transformed = ('{\n' + format_inner(value, level + 1, was_status)
+            constructed = ('{\n' + format_inner(value, level + 1, was_status)
                            + indent + '}')
         case _:
-            transformed = str(value)
-    return transformed + '\n'
+            constructed = str(value)
+    return constructed + '\n'
