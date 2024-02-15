@@ -10,25 +10,24 @@ def format_inner(diff, input_dir=''):
     for key, (value, status) in diff.items():
         dir = '.'.join((input_dir, key)) if input_dir else key
         dir_with_quotes = construct(dir)
+        line = None
         match status:
             case 'removed':
-                lines.append(MESSAGE_START + dir_with_quotes
-                             + ' was removed\n')
+                line = MESSAGE_START + dir_with_quotes + ' was removed'
             case 'added':
-                lines.append(MESSAGE_START + dir_with_quotes
-                             + ' was added with value: '
-                             + construct(value)
-                             + '\n')
+                line = (MESSAGE_START + dir_with_quotes
+                        + ' was added with value: '
+                        + construct(value))
             case 'nested':
-                lines.append(format_inner(value, dir))
+                line = format_inner(value, dir)
             case 'updated':
-                lines.append(MESSAGE_START + dir_with_quotes
-                             + ' was updated. From '
-                             + ' to '.join(
-                               [construct(sub_value)
-                                for sub_value in value]
-                             )
-                             + '\n')
+                line = (MESSAGE_START + dir_with_quotes
+                        + ' was updated. From '
+                        + ' to '.join(
+                          [construct(sub_value)
+                           for sub_value in value]))
+        line = line + '\n' if line and status != 'nested' else line
+        lines.append(line) if line else None
     return ''.join(lines)
 
 
