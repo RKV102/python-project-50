@@ -15,15 +15,15 @@ def format_inner(diff, level=1, was_status=False):
         match status:
             case 'removed':
                 lines.append(f'{indent_before_the_sign}- {key}: '
-                             + construct(value, level, indent, status))
+                             + construct(value, level, indent, True))
             case 'added':
                 lines.append(f'{indent_before_the_sign}+ {key}: '
-                             + construct(value, level, indent, status))
+                             + construct(value, level, indent, True))
             case 'updated':
                 appended = []
                 for value_, sign in ((value[0], '-'), (value[1], '+')):
                     appended.append(f'{indent_before_the_sign}{sign} {key}: '
-                                    + construct(value_, level, indent, status))
+                                    + construct(value_, level, indent, True))
                 lines.append(''.join(appended))
             case 'nested':
                 lines.append(f'{indent}{key}: '
