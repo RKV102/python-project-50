@@ -10,7 +10,7 @@ def format_inner(diff, input_dir=''):
     lines = []
     for key, (value, status) in diff.items():
         dir = '.'.join((input_dir, key)) if input_dir else key
-        dir_with_quotes = make_quotes(dir)
+        dir_with_quotes = transform(dir)
         match status:
             case 'removed':
                 lines.append(MESSAGE_START + dir_with_quotes
@@ -19,7 +19,7 @@ def format_inner(diff, input_dir=''):
                 lines.append(MESSAGE_START + dir_with_quotes
                              + ' was added with value: '
                              + (COMPLEX_VALUE if isinstance(value, dict)
-                                else make_quotes(value))
+                                else transform(value))
                              + '\n')
             case 'nested':
                 lines.append(format_inner(value, dir))
@@ -29,17 +29,11 @@ def format_inner(diff, input_dir=''):
                              + ' to '.join(
                                [COMPLEX_VALUE
                                 if isinstance(sub_value, dict)
-                                else make_quotes(sub_value)
+                                else transform(sub_value)
                                 for sub_value in value]
                              )
                              + '\n')
     return ''.join(lines)
-
-
-def make_quotes(value):
-    transformed_value = transform(value)
-    return f"'{transformed_value}'" if isinstance(value, str) \
-        else transformed_value
 
 
 def transform(value):
@@ -49,6 +43,6 @@ def transform(value):
         case 'NoneType':
             return 'null'
         case 'str':
-            return value
+            return f"'{value}'"
         case _:
             return str(value)
