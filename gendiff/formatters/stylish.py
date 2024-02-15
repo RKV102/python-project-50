@@ -16,43 +16,34 @@ def format_inner(diff, level=1, was_status=False):
         match status:
             case 'removed':
                 messages.append(f'{indent_before_the_sign}- {key}: '
-                                + ('{\n' + format_inner(value, level + 1, True)
-                                   + indent + '}' if isinstance(value, dict)
-                                   else transform(value)) + '\n')
+                                + transform(value, level, indent, status))
             case 'added':
                 messages.append(f'{indent_before_the_sign}+ {key}: '
-                                + ('{\n' + format_inner(value, level + 1, True)
-                                   + indent + '}' if isinstance(value, dict)
-                                   else transform(value)) + '\n')
+                                + transform(value, level, indent, status))
             case 'updated':
                 appended = []
                 for value_, sign in ((value[0], '-'), (value[1], '+')):
                     appended.append(f'{indent_before_the_sign}{sign} {key}: '
-                                    + ('{\n' + format_inner(value_, level + 1,
-                                                            True)
-                                       + indent + '}'
-                                       if isinstance(value_, dict)
-                                       else transform(value_)) + '\n')
+                                    + transform(value_, level, indent, status))
                 messages.append(''.join(appended))
-            case 'nested':
-                messages.append(f'{indent}{key}: ' + '{\n'
-                                + format_inner(value, level + 1) + indent + '}'
-                                + '\n')
             case _:
                 messages.append(f'{indent}{key}: '
-                                + ('{\n' + format_inner(value, level + 1, True)
-                                   + indent + '}' if isinstance(value, dict)
-                                   else transform(value)) + '\n')
+                                + transform(value, level, indent, status))
     return ''.join(messages)
 
 
-def transform(value):
+def transform(value, level, indent, status):
     match str(type(value))[8:-2]:
         case 'bool':
-            return str(value).lower()
+            transformed = str(value).lower()
         case 'NoneType':
-            return 'null'
+            transformed = 'null'
         case 'str':
-            return value
+            transformed = value
+        case 'dict':
+            was_status = False if status == 'nested' else True
+            transformed = ('{\n' + format_inner(value, level + 1, was_status)
+                           + indent + '}')
         case _:
-            return str(value)
+            transformed = str(value)
+    return transformed + '\n'

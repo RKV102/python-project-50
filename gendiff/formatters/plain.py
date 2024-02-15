@@ -1,6 +1,3 @@
-from gendiff.formatters.stylish import transform
-
-
 MESSAGE_START = 'Property '
 COMPLEX_VALUE = '[complex value]'
 
@@ -43,3 +40,15 @@ def make_quotes(value):
     transformed_value = transform(value)
     return f"'{transformed_value}'" if isinstance(value, str) \
         else transformed_value
+
+
+def transform(value):
+    match str(type(value))[8:-2]:
+        case 'bool':
+            return str(value).lower()
+        case 'NoneType':
+            return 'null'
+        case 'str':
+            return value
+        case _:
+            return str(value)
