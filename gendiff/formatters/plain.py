@@ -1,5 +1,4 @@
 MESSAGE_START = 'Property '
-COMPLEX_VALUE = '[complex value]'
 
 
 def format(diff):
@@ -18,8 +17,7 @@ def format_inner(diff, input_dir=''):
             case 'added':
                 lines.append(MESSAGE_START + dir_with_quotes
                              + ' was added with value: '
-                             + (COMPLEX_VALUE if isinstance(value, dict)
-                                else transform(value))
+                             + transform(value)
                              + '\n')
             case 'nested':
                 lines.append(format_inner(value, dir))
@@ -27,9 +25,7 @@ def format_inner(diff, input_dir=''):
                 lines.append(MESSAGE_START + dir_with_quotes
                              + ' was updated. From '
                              + ' to '.join(
-                               [COMPLEX_VALUE
-                                if isinstance(sub_value, dict)
-                                else transform(sub_value)
+                               [transform(sub_value)
                                 for sub_value in value]
                              )
                              + '\n')
@@ -44,5 +40,7 @@ def transform(value):
             return 'null'
         case 'str':
             return f"'{value}'"
+        case 'dict':
+            return '[complex value]'
         case _:
             return str(value)
