@@ -25,7 +25,8 @@ def format_inner(diff, input_dir=''):
                         + ' was updated. From '
                         + ' to '.join(
                           [construct(sub_value)
-                           for sub_value in value]))
+                           for sub_value in value])
+                        )
         line = line + '\n' if line and status != 'nested' else line
         lines.append(line) if line else None
     return ''.join(lines)
