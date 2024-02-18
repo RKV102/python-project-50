@@ -1,6 +1,6 @@
 import pytest
 from gendiff.diff_generator import generate_diff
-from tests.__init__ import get_fixture_path, load_fixture_content
+from tests import get_fixture_path, load_fixture_content
 
 
 @pytest.mark.parametrize('input1, input2, formatter, output', [

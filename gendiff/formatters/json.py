@@ -1,5 +1,5 @@
 import json
-from gendiff.formatters.__init__ import INDENT_LEN
+from gendiff.formatters import INDENT_LEN
 
 
 def format(diff):
