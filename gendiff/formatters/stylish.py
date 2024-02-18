@@ -1,50 +1,48 @@
 from gendiff.formatters import INDENT_LEN, INDENT_SYMBOL
 
 
-def format(diff):
-    return '{\n' + format_inner(diff) + '}'
-
-
-def format_inner(diff, level=1, was_status=False):
-    indent = INDENT_SYMBOL * INDENT_LEN * level
+def format(diff, level=1):
+    indent_part = INDENT_SYMBOL * INDENT_LEN
+    indent_before_the_brace = indent_part * (level - 1)
+    indent = indent_part * level
     indent_before_the_sign = f'{indent[:-2]}'
-    lines = []
-    for key, value_and_status in diff.items():
-        (value, status) = (value_and_status[0], value_and_status[1]) \
-            if not was_status else (value_and_status, None)
+    lines = ['{', indent_before_the_brace + '}']
+    for key, (value, status) in diff.items():
         match status:
             case 'removed':
-                lines.append(f'{indent_before_the_sign}- {key}: '
-                             + construct(value, level, indent, True))
+                inserted = (f'{indent_before_the_sign}- {key}: '
+                            + format_inner(value, level + 1))
             case 'added':
-                lines.append(f'{indent_before_the_sign}+ {key}: '
-                             + construct(value, level, indent, True))
+                inserted = (f'{indent_before_the_sign}+ {key}: '
+                            + format_inner(value, level + 1))
             case 'updated':
-                appended = []
-                for value_, sign in ((value[0], '-'), (value[1], '+')):
-                    appended.append(f'{indent_before_the_sign}{sign} {key}: '
-                                    + construct(value_, level, indent, True))
-                lines.append(''.join(appended))
+                inserted = '\n'.join([f'{indent_before_the_sign}{sign} {key}: '
+                                      + format_inner(sub_value, level + 1)
+                                      for sub_value, sign
+                                      in ((value[0], '-'), (value[1], '+'))])
             case 'nested':
-                lines.append(f'{indent}{key}: '
-                             + construct(value, level, indent, False))
-            case _:
-                lines.append(f'{indent}{key}: '
-                             + construct(value, level, indent, True))
-    return ''.join(lines)
+                inserted = f'{indent}{key}: ' + format(value, level + 1)
+            case 'same':
+                inserted = f'{indent}{key}: ' + format_inner(value, level + 1)
+        lines.insert(-1, inserted)
+    return '\n'.join(lines)
 
 
-def construct(value, level, indent, was_status=None):
-    match str(type(value))[8:-2]:
-        case 'bool':
-            constructed = str(value).lower()
-        case 'NoneType':
-            constructed = 'null'
-        case 'str':
-            constructed = value
-        case 'dict':
-            constructed = ('{\n' + format_inner(value, level + 1, was_status)
-                           + indent + '}')
-        case _:
-            constructed = str(value)
-    return constructed + '\n'
+def format_inner(inner, level):
+    if isinstance(inner, bool):
+        return str(inner).lower()
+    elif inner is None:
+        return 'null'
+    elif isinstance(inner, str):
+        return inner
+    elif isinstance(inner, dict):
+        indent_part = INDENT_SYMBOL * INDENT_LEN
+        indent_before_the_brace = indent_part * (level - 1)
+        indent = indent_part * level
+        lines = ['{', indent_before_the_brace + '}']
+        for key, value in inner.items():
+            inserted = f'{indent}{key}: ' + format_inner(value, level + 1)
+            lines.insert(-1, inserted)
+        return '\n'.join(lines)
+    else:
+        return str(inner)
