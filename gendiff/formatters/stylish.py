@@ -10,21 +10,21 @@ def format(diff, level=1):
     for key, (value, status) in diff.items():
         match status:
             case 'removed':
-                inserted = (f'{indent_before_the_sign}- {key}: '
+                appended = (f'{indent_before_the_sign}- {key}: '
                             + to_str(value, level + 1))
             case 'added':
-                inserted = (f'{indent_before_the_sign}+ {key}: '
+                appended = (f'{indent_before_the_sign}+ {key}: '
                             + to_str(value, level + 1))
             case 'updated':
-                inserted = '\n'.join([f'{indent_before_the_sign}{sign} {key}: '
+                appended = '\n'.join([f'{indent_before_the_sign}{sign} {key}: '
                                       + to_str(sub_value, level + 1)
                                       for sub_value, sign
                                       in ((value[0], '-'), (value[1], '+'))])
             case 'nested':
-                inserted = f'{indent}{key}: ' + format(value, level + 1)
+                appended = f'{indent}{key}: ' + format(value, level + 1)
             case 'same':
-                inserted = f'{indent}{key}: ' + to_str(value, level + 1)
-        lines.append(inserted)
+                appended = f'{indent}{key}: ' + to_str(value, level + 1)
+        lines.append(appended)
     lines.append(indent_before_the_brace + '}')
     return '\n'.join(lines)
 
@@ -42,8 +42,8 @@ def to_str(inner, level):
         indent = indent_part * level
         lines = ['{']
         for key, value in inner.items():
-            inserted = f'{indent}{key}: ' + to_str(value, level + 1)
-            lines.append(inserted)
+            appended = f'{indent}{key}: ' + to_str(value, level + 1)
+            lines.append(appended)
         lines.append(indent_before_the_brace + '}')
         return '\n'.join(lines)
     else:
