@@ -6,7 +6,7 @@ def format(diff, level=1):
     indent_before_the_brace = indent_part * (level - 1)
     indent = indent_part * level
     indent_before_the_sign = f'{indent[:-2]}'
-    lines = ['{', indent_before_the_brace + '}']
+    lines = ['{']
     for key, (value, status) in diff.items():
         match status:
             case 'removed':
@@ -24,7 +24,8 @@ def format(diff, level=1):
                 inserted = f'{indent}{key}: ' + format(value, level + 1)
             case 'same':
                 inserted = f'{indent}{key}: ' + to_str(value, level + 1)
-        lines.insert(-1, inserted)
+        lines.append(inserted)
+    lines.append(indent_before_the_brace + '}')
     return '\n'.join(lines)
 
 
@@ -39,10 +40,11 @@ def to_str(inner, level):
         indent_part = INDENT_SYMBOL * INDENT_LEN
         indent_before_the_brace = indent_part * (level - 1)
         indent = indent_part * level
-        lines = ['{', indent_before_the_brace + '}']
+        lines = ['{']
         for key, value in inner.items():
             inserted = f'{indent}{key}: ' + to_str(value, level + 1)
-            lines.insert(-1, inserted)
+            lines.append(inserted)
+        lines.append(indent_before_the_brace + '}')
         return '\n'.join(lines)
     else:
         return str(inner)
