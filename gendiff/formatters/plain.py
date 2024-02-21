@@ -11,11 +11,11 @@ def format(diff, input_dir=''):
                 line = LINE_START + dir_with_quotes + ' was removed'
             case 'added':
                 line = (LINE_START + dir_with_quotes + ' was added with value: '
-                        + format_inner(value))
+                        + to_str(value))
             case 'updated':
                 line = (LINE_START + dir_with_quotes + ' was updated. From '
                         + ' to '.join(
-                            [format_inner(sub_value) for sub_value in value]
+                            [to_str(sub_value) for sub_value in value]
                         ))
             case 'nested':
                 line = format(value, dir)
@@ -25,7 +25,7 @@ def format(diff, input_dir=''):
     return '\n'.join(lines)
 
 
-def format_inner(inner):
+def to_str(inner):
     if isinstance(inner, bool):
         return str(inner).lower()
     elif inner is None:

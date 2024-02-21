@@ -11,24 +11,24 @@ def format(diff, level=1):
         match status:
             case 'removed':
                 inserted = (f'{indent_before_the_sign}- {key}: '
-                            + format_inner(value, level + 1))
+                            + to_str(value, level + 1))
             case 'added':
                 inserted = (f'{indent_before_the_sign}+ {key}: '
-                            + format_inner(value, level + 1))
+                            + to_str(value, level + 1))
             case 'updated':
                 inserted = '\n'.join([f'{indent_before_the_sign}{sign} {key}: '
-                                      + format_inner(sub_value, level + 1)
+                                      + to_str(sub_value, level + 1)
                                       for sub_value, sign
                                       in ((value[0], '-'), (value[1], '+'))])
             case 'nested':
                 inserted = f'{indent}{key}: ' + format(value, level + 1)
             case 'same':
-                inserted = f'{indent}{key}: ' + format_inner(value, level + 1)
+                inserted = f'{indent}{key}: ' + to_str(value, level + 1)
         lines.insert(-1, inserted)
     return '\n'.join(lines)
 
 
-def format_inner(inner, level):
+def to_str(inner, level):
     if isinstance(inner, bool):
         return str(inner).lower()
     elif inner is None:
@@ -41,7 +41,7 @@ def format_inner(inner, level):
         indent = indent_part * level
         lines = ['{', indent_before_the_brace + '}']
         for key, value in inner.items():
-            inserted = f'{indent}{key}: ' + format_inner(value, level + 1)
+            inserted = f'{indent}{key}: ' + to_str(value, level + 1)
             lines.insert(-1, inserted)
         return '\n'.join(lines)
     else:
